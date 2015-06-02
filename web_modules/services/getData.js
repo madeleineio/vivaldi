@@ -16,6 +16,9 @@ export default function () {
                     let sound, time, divisions;
                     part.measure.forEach( (measure, numMeasure) => {
 
+                        // note is not always an array...
+                        !Array.isArray(measure.note) && (measure.note = [measure.note])
+
                         // retrive direction.sound : tempos are indicated only on some measures of the first part
                         // if we are on the first part, we use the last direction found on the
                         // previous measures with sound defined
