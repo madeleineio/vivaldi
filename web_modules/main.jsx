@@ -8,7 +8,7 @@ import Score from './components/Score.jsx'
 getData().then(data => {
     console.log(data)
     React.render(
-        <Score score={data}/>,
+        <Score score={data.scorePartwise}/>,
         document.getElementsByTagName('body')[0]
     )
 })
