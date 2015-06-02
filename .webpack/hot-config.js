@@ -4,9 +4,8 @@ var path = require('path')
 var webpack = require('webpack')
 
 module.exports = {
-    entry: {
-        app: ['webpack/hot/dev-server', path.resolve('web_modules/main.jsx')]
-    },
+    devtool: '#source-map',
+    entry: ['webpack/hot/dev-server', path.resolve('web_modules/main.jsx')],
     output: {
         path: path.resolve('public/js'),
         filename: 'main.js',
@@ -18,7 +17,7 @@ module.exports = {
     module: {
         loaders: [{
             test: /\.jsx?$/,
-            loaders: ['babel'],
+            loaders: ['react-hot', 'babel'],
             exclude: path.resolve('node_modules')
         }]
     },

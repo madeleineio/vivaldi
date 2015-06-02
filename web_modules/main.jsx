@@ -1,3 +1,15 @@
-var React = require('react/addons')
+import React from 'react/addons.js'
 
-alert("tata")
+import getData from './services/getData.js'
+
+import Score from './components/Score.jsx'
+
+
+getData().then(data => {
+    console.log(data)
+    React.render(
+        <Score score={data}/>,
+        document.getElementsByTagName('body')[0]
+    )
+})
+
