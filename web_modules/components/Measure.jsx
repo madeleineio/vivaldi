@@ -37,12 +37,8 @@ class Measure extends React.Component {
         return (
             <span>
                 <svg style={style}>
-                    <g>
-                        {d3.range(0, 7).map(l => <line key={l} x1="0" y1={scaleY(l)} x2="150" y2={scaleY(l)} stroke="black"/>)}
-                    </g>
-                    <g>
-                        <line x1="150" y1="0" x2="150" y2="30" stroke="black" />
-                    </g>
+                    <g> {d3.range(0, 7).map(l => <line key={l} x1="0" y1={scaleY(l)} x2="150" y2={scaleY(l)} stroke="black"/>)} </g>
+                    <g> <line x1="150" y1="0" x2="150" y2="30" stroke="black" /> </g>
                     <g>
                     {note.map( (n,k) => {
                         if('rest' in n){
