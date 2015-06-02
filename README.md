@@ -2,6 +2,11 @@
 -------------
 
 A visualisation of Vivaldi's Flute Concerto in G minor
+
+## Development
+
+* http://localhost:3021/webpack-dev-server/
+* ./node_modules/.bin/webpack-dev-server --config .webpack/hot-config.js --port 3021 --content-base public/
  
 ## References 
 
