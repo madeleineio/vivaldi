@@ -50,7 +50,6 @@ class Measure extends React.Component {
                         }else if('pitch' in n) {
                             return <circle cx={scaleXNote(k)} cy="15" r="3" fill="black" />
                         }
-
                     } )}
                     </g>
                 </svg>
