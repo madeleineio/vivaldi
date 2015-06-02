@@ -21,5 +21,9 @@ module.exports = {
             loaders: ['babel'],
             exclude: path.resolve('node_modules')
         }]
+    },
+    devServer: {
+        contentBase: path.resolve('public'),
+        port: 3021
     }
 }

@@ -21,7 +21,7 @@
     "xml2json": "^0.6.2"
   },
   "scripts": {
-    "hot": "./node_modules/.bin/webpack-dev-server --config .webpack/hot-config.js --port 3021 --content-base public/ --hot"
+    "hot": "./node_modules/.bin/webpack-dev-server --config .webpack/hot-config.js --hot true"
   },
   "repository": {
     "type": "git",
