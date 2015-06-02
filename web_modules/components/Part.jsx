@@ -10,7 +10,9 @@ export default class Part extends React.Component {
 
     render(){
         return (
-            <div>part</div>
+            <div>
+                <span>toito</span>
+            </div>
         )
     }
 }
