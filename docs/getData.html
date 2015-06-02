@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+  <title>getData.js</title>
+  <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+  <meta name="viewport" content="width=device-width, target-densitydpi=160dpi, initial-scale=1.0; maximum-scale=1.0; user-scalable=0;">
+  <link rel="stylesheet" media="all" href="docco.css" />
+</head>
+<body>
+  <div id="container">
+    <div id="background"></div>
+    
+      <ul id="jump_to">
+        <li>
+          <a class="large" href="javascript:void(0);">Jump To &hellip;</a>
+          <a class="small" href="javascript:void(0);">+</a>
+          <div id="jump_wrapper">
+          <div id="jump_page_wrapper">
+            <div id="jump_page">
+              
+                
+                <a class="source" href="Measure.html">
+                  Measure.jsx
+                </a>
+              
+                
+                <a class="source" href="Note.html">
+                  Note.jsx
+                </a>
+              
+                
+                <a class="source" href="Part.html">
+                  Part.jsx
+                </a>
+              
+                
+                <a class="source" href="Score.html">
+                  Score.jsx
+                </a>
+              
+                
+                <a class="source" href="main.html">
+                  main.jsx
+                </a>
+              
+                
+                <a class="source" href="getData.html">
+                  getData.js
+                </a>
+              
+            </div>
+          </div>
+        </li>
+      </ul>
+    
+    <ul class="sections">
+        
+          <li id="title">
+              <div class="annotation">
+                  <h1>getData.js</h1>
+              </div>
+          </li>
+        
+        
+        
+        <li id="section-1">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-1">&#182;</a>
+              </div>
+              
+            </div>
+            
+            <div class="content"><div class='highlight'><pre><span class="hljs-pi">'use strict'</span>
+
+<span class="hljs-keyword">import</span> $ from <span class="hljs-string">'jquery/dist/jquery.js'</span>
+
+<span class="hljs-keyword">let</span> p = <span class="hljs-literal">null</span>
+
+<span class="hljs-keyword">export</span> <span class="hljs-keyword">default</span> <span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params"></span>) </span>{
+
+    <span class="hljs-keyword">if</span> (p === <span class="hljs-literal">null</span>) {
+        p = <span class="hljs-keyword">new</span> <span class="hljs-built_in">Promise</span>((res) =&gt; {
+            $.ajax({
+                url: <span class="hljs-string">'data/score.json'</span>,
+                dataType: <span class="hljs-string">'json'</span>
+            }).done(data =&gt; {
+                data.scorePartwise.part.forEach((part, numPart) =&gt; {
+                    <span class="hljs-keyword">let</span> sound, time, divisions;
+                    part.measure.forEach( (measure, numMeasure) =&gt; {</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-2">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-2">&#182;</a>
+              </div>
+              <p>note is not always an array…</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>                        !<span class="hljs-built_in">Array</span>.isArray(measure.note) &amp;&amp; (measure.note = [measure.note])</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-3">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-3">&#182;</a>
+              </div>
+              <p>retrive direction.sound : tempos are indicated only on some measures of the first part
+if we are on the first part, we use the last direction found on the
+previous measures with sound defined</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>                        <span class="hljs-keyword">if</span>(numPart === <span class="hljs-number">0</span>){
+                           <span class="hljs-keyword">if</span>(<span class="hljs-string">'direction'</span> <span class="hljs-keyword">in</span> measure &amp;&amp; <span class="hljs-string">'sound'</span> <span class="hljs-keyword">in</span> measure[<span class="hljs-string">'direction'</span>]){
+                               sound = measure.direction.sound
+                           }
+                        }</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-4">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-4">&#182;</a>
+              </div>
+              <p>on other parts, we simply use the direction defined on the first part for the current
+num measure</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>                        <span class="hljs-keyword">else</span> {
+                            sound = data.scorePartwise.part[<span class="hljs-number">0</span>].measure[numMeasure].computed.sound
+                        }</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-5">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-5">&#182;</a>
+              </div>
+              <p>retrive attributes.division :
+Musical durations are commonly referred to as fractions: whole notes, half notes, quarter notes,
+and the like.
+While each musical note could have a fraction associated with it, MusicXML instead follows
+MIDI by specifying the number of divisions per quarter note <em>at the start of a musical part</em>,
+and then specifying note durations in terms of these divisions.</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>                        divisions = part.measure[<span class="hljs-number">0</span>].attributes.divisions</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-6">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-6">&#182;</a>
+              </div>
+              <p>retrive attributes.time :
+if attributes time is not defined, we use the value of the previous measure</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>                        <span class="hljs-keyword">if</span>(<span class="hljs-string">'attributes'</span> <span class="hljs-keyword">in</span> measure &amp;&amp; <span class="hljs-string">'time'</span> <span class="hljs-keyword">in</span> measure.attributes){
+                            time = measure.attributes.time
+                        }<span class="hljs-keyword">else</span> {
+                            time = part.measure[numMeasure-<span class="hljs-number">1</span>].computed.time
+                        }</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-7">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-7">&#182;</a>
+              </div>
+              <p>each mesure is extended by the computed sound, divisions and time</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>                        $.extend(measure, {
+                            computed: {
+                                time: time,
+                                sound: sound,
+                                divisions: divisions
+                            }
+                        })
+                    })
+                })
+                res(data)
+            })
+        })
+    }
+    <span class="hljs-keyword">return</span> p
+}</pre></div></div>
+            
+        </li>
+        
+    </ul>
+  </div>
+</body>
+</html>

@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+  <title>Measure.jsx</title>
+  <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+  <meta name="viewport" content="width=device-width, target-densitydpi=160dpi, initial-scale=1.0; maximum-scale=1.0; user-scalable=0;">
+  <link rel="stylesheet" media="all" href="docco.css" />
+</head>
+<body>
+  <div id="container">
+    <div id="background"></div>
+    
+      <ul id="jump_to">
+        <li>
+          <a class="large" href="javascript:void(0);">Jump To &hellip;</a>
+          <a class="small" href="javascript:void(0);">+</a>
+          <div id="jump_wrapper">
+          <div id="jump_page_wrapper">
+            <div id="jump_page">
+              
+                
+                <a class="source" href="Measure.html">
+                  Measure.jsx
+                </a>
+              
+                
+                <a class="source" href="Note.html">
+                  Note.jsx
+                </a>
+              
+                
+                <a class="source" href="Part.html">
+                  Part.jsx
+                </a>
+              
+                
+                <a class="source" href="Score.html">
+                  Score.jsx
+                </a>
+              
+                
+                <a class="source" href="main.html">
+                  main.jsx
+                </a>
+              
+                
+                <a class="source" href="getData.html">
+                  getData.js
+                </a>
+              
+            </div>
+          </div>
+        </li>
+      </ul>
+    
+    <ul class="sections">
+        
+          <li id="title">
+              <div class="annotation">
+                  <h1>Measure.jsx</h1>
+              </div>
+          </li>
+        
+        
+        
+        <li id="section-1">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-1">&#182;</a>
+              </div>
+              
+            </div>
+            
+            <div class="content"><div class='highlight'><pre><span class="hljs-pi">'use strict'</span>
+
+<span class="hljs-keyword">import</span> React <span class="hljs-keyword">from</span> <span class="hljs-string">'react/addons.js'</span>
+<span class="hljs-keyword">import</span> d3 <span class="hljs-keyword">from</span> <span class="hljs-string">'d3/d3.js'</span>
+
+export default
+class Measure extends React.Component {
+
+    constructor(props) {
+        super(props)
+    }
+
+    render() {
+
+        console.log(this.props.measure.computed)
+
+        let { note, computed } = this.props.measure</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-2">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-2">&#182;</a>
+              </div>
+              <p>scaleX : one quarter is 50px</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>        <span class="hljs-keyword">let</span> scaleX = d3.scale.linear()
+        .domain([<span class="hljs-number">0</span>, <span class="hljs-number">1</span>])
+        .range([<span class="hljs-number">0</span>, <span class="hljs-number">50</span>])
+        <span class="hljs-keyword">let</span> x = scaleX(computed.time.beats)</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-3">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-3">&#182;</a>
+              </div>
+              <p>scaleY to draw grid,</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>        <span class="hljs-keyword">let</span> y = <span class="hljs-number">30</span>, numLineGrid = <span class="hljs-number">5</span>
+        <span class="hljs-keyword">let</span> scaleY = d3.scale.linear()
+            .domain([<span class="hljs-number">0</span>, numLineGrid-<span class="hljs-number">1</span>])
+            .range([<span class="hljs-number">0</span>, y])</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-4">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-4">&#182;</a>
+              </div>
+              <p>display notes on the whole length of the measure</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>        let scaleXNote = d3.scale.linear()
+            .domain([-1, note.length])
+            .range([0, x])
+
+        let style = {
+            width: x + 'px',
+            height: y + 'px',
+            backgroundColor: 'white'
+        }
+
+
+        return (
+            &lt;span&gt;
+                &lt;svg style={style}&gt;
+                    &lt;g&gt;{ d3.range(0, numLineGrid).map(l =&gt; &lt;line key={l} x1="0" y1={scaleY(l)} x2={x} y2={scaleY(l)} stroke="black"/&gt;) }&lt;/g&gt;
+                    &lt;g&gt;
+                        &lt;line x1={x} y1="0" x2={x} y2={y} stroke="black" /&gt;
+                    &lt;/g&gt;
+                    &lt;g&gt;
+                    {note.map( (n,k) =&gt; {
+                        if('rest' in n){
+                            return &lt;rect x={scaleXNote(k)} y="13" width="10" height="4" fill="black" /&gt;
+                        }else if('pitch' in n) {
+                            return &lt;circle cx={scaleXNote(k)} cy={y/2} r="3" fill="black" /&gt;
+                        }
+                    } )}
+                    &lt;/g&gt;
+                &lt;/svg&gt;
+            &lt;/span&gt;
+
+        )
+    }
+
+}</pre></div></div>
+            
+        </li>
+        
+    </ul>
+  </div>
+</body>
+</html>
