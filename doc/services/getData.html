@@ -1,0 +1,50 @@
+<!DOCTYPE html><html lang="en"><head><title>services/getData</title></head><meta http-equiv="Content-Type" content="text/html; charset=utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0"><meta name="groc-relative-root" content="../"><meta name="groc-document-path" content="services/getData"><meta name="groc-project-path" content="web_modules/services/getData.js"><link rel="stylesheet" type="text/css" media="all" href="../assets/style.css"><script type="text/javascript" src="../assets/behavior.js"></script><body><div id="meta"><div class="file-path">web_modules/services/getData.js</div></div><div id="document"><div class="segment"><div class="code"><div class="wrapper"><span class="hljs-pi">'use strict'</span>
+
+<span class="hljs-keyword">import</span> $ from <span class="hljs-string">'jquery/dist/jquery.js'</span>
+
+<span class="hljs-keyword">let</span> p = <span class="hljs-literal">null</span>
+
+<span class="hljs-keyword">export</span> <span class="hljs-keyword">default</span> <span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params"></span>) </span>{
+
+    <span class="hljs-keyword">if</span> (p === <span class="hljs-literal">null</span>) {
+        p = <span class="hljs-keyword">new</span> <span class="hljs-built_in">Promise</span>((res) =&gt; {
+            $.ajax({
+                url: <span class="hljs-string">'data/score.json'</span>,
+                dataType: <span class="hljs-string">'json'</span>
+            }).done(data =&gt; {
+                data.scorePartwise.part.forEach((part, numPart) =&gt; {
+                    <span class="hljs-keyword">let</span> sound, time, divisions;
+                    part.measure.forEach( (measure, numMeasure) =&gt; {</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>note is not always an array...</p></div></div><div class="code"><div class="wrapper">                        !<span class="hljs-built_in">Array</span>.isArray(measure.note) &amp;&amp; (measure.note = [measure.note])</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>retrive direction.sound : tempos are indicated only on some measures of the first part
+if we are on the first part, we use the last direction found on the
+previous measures with sound defined</p></div></div><div class="code"><div class="wrapper">                        <span class="hljs-keyword">if</span>(numPart === <span class="hljs-number">0</span>){
+                           <span class="hljs-keyword">if</span>(<span class="hljs-string">'direction'</span> <span class="hljs-keyword">in</span> measure &amp;&amp; <span class="hljs-string">'sound'</span> <span class="hljs-keyword">in</span> measure[<span class="hljs-string">'direction'</span>]){
+                               sound = measure.direction.sound
+                           }
+                        }</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>on other parts, we simply use the direction defined on the first part for the current
+num measure</p></div></div><div class="code"><div class="wrapper">                        <span class="hljs-keyword">else</span> {
+                            sound = data.scorePartwise.part[<span class="hljs-number">0</span>].measure[numMeasure].computed.sound
+                        }</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>retrive attributes.division :
+Musical durations are commonly referred to as fractions: whole notes, half notes, quarter notes,
+and the like.
+While each musical note could have a fraction associated with it, MusicXML instead follows
+MIDI by specifying the number of divisions per quarter note <em>at the start of a musical part</em>,
+and then specifying note durations in terms of these divisions.</p></div></div><div class="code"><div class="wrapper">                        divisions = part.measure[<span class="hljs-number">0</span>].attributes.divisions</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>retrive attributes.time :
+if attributes time is not defined, we use the value of the previous measure</p></div></div><div class="code"><div class="wrapper">                        <span class="hljs-keyword">if</span>(<span class="hljs-string">'attributes'</span> <span class="hljs-keyword">in</span> measure &amp;&amp; <span class="hljs-string">'time'</span> <span class="hljs-keyword">in</span> measure.attributes){
+                            time = measure.attributes.time
+                        }<span class="hljs-keyword">else</span> {
+                            time = part.measure[numMeasure-<span class="hljs-number">1</span>].computed.time
+                        }</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>each mesure is extended by the computed sound, divisions and time</p></div></div><div class="code"><div class="wrapper">                        $.extend(measure, {
+                            computed: {
+                                time: time,
+                                sound: sound,
+                                divisions: divisions
+                            }
+                        })
+                    })
+                })
+                res(data)
+            })
+        })
+    }
+    <span class="hljs-keyword">return</span> p
+}</div></div></div></div></body></html>
