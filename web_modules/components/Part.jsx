@@ -8,10 +8,14 @@ export default class Part extends React.Component {
         super(props)
     }
 
+    handleClick(){
+        alert('toto')
+    }
+
     render(){
         return (
-            <div>
-            toto - tutu
+            <div onClick={this.handleClick}>
+             tutdazefqrgsqrg
             </div>
         )
     }
