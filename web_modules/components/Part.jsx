@@ -2,25 +2,22 @@
 
 import React from 'react/addons.js'
 
+import Measure from './Measure.jsx'
+
 export default class Part extends React.Component {
 
     constructor(props){
         super(props)
-        this.state = {
-            click: 0
-        }
-    }
-
-    handleClick(){
-        this.setState({
-            click: this.state.click+140
-        })
     }
 
     render(){
+        let { partName } = this.props.scorePart
+        let { measure } = this.props.part
+
         return (
-            <div onClick={this.handleClick.bind(this)}>
-            {this.state.click}
+            <div>
+                <h2>part : {partName}</h2>
+                { measure.map( (m,k) =>  <Measure key={k} measure={m}/> )}
             </div>
         )
     }
