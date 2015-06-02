@@ -18,6 +18,8 @@ class Measure extends React.Component {
 
     render() {
 
+        console.log(this.props.measure.computed)
+
         // draw grid
         let scaleY = d3.scale.linear()
             .domain([0, 6])
