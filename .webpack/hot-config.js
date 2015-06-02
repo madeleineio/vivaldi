@@ -4,7 +4,9 @@ var path = require('path')
 var webpack = require('webpack')
 
 module.exports = {
-    entry: path.resolve('web_modules/main.jsx'),
+    entry: {
+        app: ['webpack/hot/dev-server', path.resolve('web_modules/main.jsx')]
+    },
     output: {
         path: path.resolve('public/js'),
         filename: 'main.js',
