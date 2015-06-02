@@ -21,7 +21,8 @@
     "xml2json": "^0.6.2"
   },
   "scripts": {
-    "hot": "./node_modules/.bin/webpack-dev-server --config .webpack/hot-config.js --hot true"
+    "prehot": "open http://localhost:3021/webpack-dev-server/",
+    "hot": "./node_modules/.bin/webpack-dev-server --config .webpack/hot-config.js --hot"
   },
   "repository": {
     "type": "git",

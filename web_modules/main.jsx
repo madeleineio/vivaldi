@@ -1,3 +1,3 @@
 var React = require('react/addons')
 
-alert("tutu")
+alert("tata")
