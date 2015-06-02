@@ -6,10 +6,6 @@ import d3 from 'd3/d3.js'
 export default
 class Measure extends React.Component {
 
-    constructor(props) {
-        super(props)
-    }
-
     render() {
 
         console.log(this.props.measure.computed)

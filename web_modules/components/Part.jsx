@@ -6,10 +6,6 @@ import Measure from './Measure.jsx'
 
 export default class Part extends React.Component {
 
-    constructor(props){
-        super(props)
-    }
-
     render(){
         let { partName } = this.props.scorePart
         let { measure } = this.props.part

@@ -2,12 +2,9 @@ import React from 'react/addons.js'
 
 import Part from './Part.jsx'
 
+// ## Score component : a Score contains multiples parts (one for each type of instruments involved in the score
 export default
 class Score extends React.Component {
-
-    constructor(props) {
-        super(props)
-    }
 
     render() {
 

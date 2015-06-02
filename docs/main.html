@@ -25,11 +25,6 @@
                 </a>
               
                 
-                <a class="source" href="Note.html">
-                  Note.jsx
-                </a>
-              
-                
                 <a class="source" href="Part.html">
                   Part.jsx
                 </a>
@@ -77,14 +72,44 @@
 
 <span class="hljs-keyword">import</span> getData <span class="hljs-keyword">from</span> <span class="hljs-string">'./services/getData.js'</span>
 
-<span class="hljs-keyword">import</span> Score <span class="hljs-keyword">from</span> <span class="hljs-string">'./components/Score.jsx'</span>
+<span class="hljs-keyword">import</span> Score <span class="hljs-keyword">from</span> <span class="hljs-string">'./components/Score.jsx'</span></pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-2">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-2">&#182;</a>
+              </div>
+              <p>first retrieve data from server</p>
 
-getData().then(data =&gt; {
-    React.render(
-        &lt;Score score={data.scorePartwise}/&gt;,
-        document.getElementsByTagName(<span class="hljs-string">'body'</span>)[0]
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>getData().then(data =&gt; {</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-3">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-3">&#182;</a>
+              </div>
+              <p>then render the Score component controller</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>    React.render(
+        <span class="xml"><span class="hljs-tag">&lt;<span class="hljs-title">Score</span> <span class="hljs-attribute">score</span>=<span class="hljs-value">{data.scorePartwise}</span>/&gt;</span>,
+        document.getElementsByTagName('body')[0]
     )
-})</pre></div></div>
+})
+
+
+</span></pre></div></div>
             
         </li>
         
