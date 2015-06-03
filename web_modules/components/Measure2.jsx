@@ -3,6 +3,8 @@
 import React from 'react/addons.js'
 import d3 from 'd3/d3.js'
 
+import getIntByPitch from '../services/getIntByPitch.js'
+
 export default
 class Measure2 extends React.Component {
 
@@ -16,24 +18,31 @@ class Measure2 extends React.Component {
 
         let currentTranslateY = 0
 
+        let scaleColor = d3.scale.linear()
+            // 0 - 62
+            .domain([10, 50])
+            .range(['#ff0000', '#0000ff'])
+            .clamp(false)
+
         return (
             <g>
-                {measure.note.filter(n => !('chord' in n)).map( (n,k) => {
+                {measure.note.filter(n => !('chord' in n)).map((n, k) => {
                     let y = scaleY(n.duration)
-                    let rect =  <rect
+                    let rect = <rect
                         key={k}
-                        transform={'translate(' + [0,currentTranslateY] + ')'}
+                        transform={'translate(' + [0, currentTranslateY] + ')'}
                         x={0}
                         width={width}
                         y={0}
                         height={y}
-                        fill={'rest' in n ? 'white' : 'black'}
-                        stroke={'red'}
-                        />
+                        fill={'rest' in n ? 'white' : scaleColor(getIntByPitch(n.pitch))}
+                        stroke={'white'}
+                        strokeWidth={.5}
+                    />
                     currentTranslateY += y
                     return rect
-                } )}
-                <rect stroke={'red'} x={0} width={width} y={0} height={height} fillOpacity="0"/>
+                })}
+                <rect x={0} width={width} y={0} height={height} fillOpacity="0"/>
             </g>
         )
     }
