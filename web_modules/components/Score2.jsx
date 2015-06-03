@@ -19,16 +19,13 @@ class Score2 extends React.Component {
             .range([0, w])
 
         return (
-            <div>
-                <h1>score</h1>
-                <svg width={w} height={h}>
-                {part.map((p, k) =>
-                    <g key={k} transform={'translate(' + [scaleXParts(k), 0] + ')'} >
-                        <Part2 part={p} scorePart={partList.scorePart[k]} width={partWidth} height={h}/>
+            <svg width={w} height={h} >
+                {part.map((p,k) =>
+                    <g key={k} transform={'translate(' + [scaleXParts(k), 0] + ')'} className="part" >
+                        <Part2 part={p} scorePart={partList.scorePart[k]} width={partWidth} height={h} />
                     </g>
                 )}
-                </svg>
-            </div>
+            </svg>
         )
     }
 }
