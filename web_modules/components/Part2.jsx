@@ -20,8 +20,8 @@ class Part2 extends React.Component {
         return (
             <g>
             {part.measure.map( (m,k) => (
-                <g transform={'translate(' + [0, scaleYMeasure(k)] + ')'}>
-                    <Measure2 measure={m} height={measureHeight} width={width}/>
+                <g key={k} transform={'translate(' + [0, scaleYMeasure(k)] + ')'}>
+                    <Measure2 measure={m} height={measureHeight} width={width} />
                 </g>
             ) )}
             </g>
