@@ -28,6 +28,7 @@ class Measure2 extends React.Component {
             <g>
                 {measure.note.filter(n => !('chord' in n)).map((n, k) => {
                     let y = scaleY(n.duration)
+                    let col = 'rest' in n ? 'white' : scaleColor(getIntByPitch(n.pitch))
                     let rect = <rect
                         key={k}
                         transform={'translate(' + [0, currentTranslateY] + ')'}
@@ -35,14 +36,13 @@ class Measure2 extends React.Component {
                         width={width}
                         y={0}
                         height={y}
-                        fill={'rest' in n ? 'white' : scaleColor(getIntByPitch(n.pitch))}
-                        stroke={'white'}
-                        strokeWidth={.5}
+                        fill={col}
+                        stroke={col}
                     />
                     currentTranslateY += y
                     return rect
                 })}
-                <rect x={0} width={width} y={0} height={height} fillOpacity="0"/>
+                //<rect x={0} width={width} y={0} height={height} fillOpacity="0"/>
             </g>
         )
     }

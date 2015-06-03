@@ -11,7 +11,7 @@ class Score2 extends React.Component {
 
         let { part, partList } = this.props.score
 
-        let w = 400, h = 20000
+        let w = 500, h = 20000
         let partWidth = w / part.length
 
         let scaleXParts = d3.scale.linear()
