@@ -13,26 +13,27 @@ class Measure2 extends React.Component {
         let scaleY = d3.scale.linear()
             .domain([0, measure.computed.time.beats * measure.computed.divisions])
             .range([0, height])
-        let heightNote = height / measure.note.length
 
         let currentTranslateY = 0
 
         return (
             <g>
-                    {measure.note.filter(n => !('chord' in n)).map( (n,k) => {
-                        let y = scaleY(n.duration)
-                        let rect =  <rect
-                            key={k}
-                            transform={'translate(' + [0,currentTranslateY] + ')'}
-                            x={0}
-                            width={width}
-                            y={y}
-                            height={heightNote}
-                            fill={'rest' in n ? 'white' : 'black'}
-                            stroke={'red'}  />
-                        currentTranslateY += y
-                        return rect
-                    } )}
+                {measure.note.filter(n => !('chord' in n)).map( (n,k) => {
+                    let y = scaleY(n.duration)
+                    let rect =  <rect
+                        key={k}
+                        transform={'translate(' + [0,currentTranslateY] + ')'}
+                        x={0}
+                        width={width}
+                        y={0}
+                        height={y}
+                        fill={'rest' in n ? 'white' : 'black'}
+                        stroke={'red'}
+                        />
+                    currentTranslateY += y
+                    return rect
+                } )}
+                <rect stroke={'red'} x={0} width={width} y={0} height={height} fillOpacity="0"/>
             </g>
         )
     }
