@@ -24,6 +24,7 @@ class Score2 extends React.Component {
             // duration in ms
             duration: duration
         }
+        console.log(duration / 60000)
     }
 
     initTime(){
