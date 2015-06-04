@@ -32,7 +32,7 @@ class Measure2 extends React.Component {
 
         let scaleColor = d3.scale.linear()
             // 0 - 62
-            .domain([10, 50])
+            .domain([15, 45])
             .range(['#ff0000', '#0000ff'])
             .clamp(false)
 
@@ -56,7 +56,7 @@ class Measure2 extends React.Component {
                                     y={0}
                                     height={y}
                                     fill={col}
-                                    stroke={'white'}
+                                    stroke={col}
                                 />)
                             }) }
                         </g>
