@@ -8,16 +8,18 @@ import Measure2 from './Measure2.jsx'
 export default
 class Part2 extends React.Component {
 
+    // just one rendering
+    shouldComponentUpdate(){
+        return false
+    }
+
     render() {
 
-        let { part, scorePart, width, height } = this.props
-
-        // compute total duration of the part in minutes
-        let totalDuration = part.measure.reduce((sum, curMeasure) => sum + 1 / curMeasure.computed.sound.tempo, 0)
+        let { part, scorePart, width, height, duration } = this.props
 
         // scale for a measure's height : total duration is mapped to the total height
         let scaleY = d3.scale.linear()
-            .domain([0, totalDuration])
+            .domain([0, duration])
             .range([0, height])
 
         // current height counter
@@ -26,20 +28,16 @@ class Part2 extends React.Component {
         return (
             <g>
             {part.measure.map((m, k) => {
-
-                // compute height for current measure
-                let measureHeight = scaleY(1/m.computed.sound.tempo)
-
+                // compute height for current measure : beats by measure / tempo
+                let measureHeight = scaleY(1000 * 60 * m.computed.time.beats / m.computed.sound.tempo)
                 // measure component, encapsulated in a g tag with a transform attribute
                 let measure = (
                     <g key={k} transform={'translate(' + [0, currentHeight] + ')'} className="measure" >
                         <Measure2 measure={m} height={measureHeight} width={width} />
                     </g>
                 )
-
                 // increment currentHeight
                 currentHeight += measureHeight
-
                 return measure
             })}
             </g>
