@@ -39,6 +39,7 @@ class Measure2 extends React.Component {
         // measur border for debug
         let measureBorder = <rect x={0} width={width} y={0} height={height} fillOpacity={0} stroke={'black'} strokeWidth={1}/>
 
+        // display notes organized by chords
         return (
             <g>
                 {chords.map( (group,k) => {
