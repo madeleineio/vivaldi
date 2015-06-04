@@ -56,7 +56,7 @@ class Measure2 extends React.Component {
                                     y={0}
                                     height={y}
                                     fill={col}
-                                    stroke={col}
+                                    stroke={'white'}
                                 />)
                             }) }
                         </g>

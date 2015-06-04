@@ -14,3 +14,4 @@ A visualisation of Vivaldi's Flute Concerto in G minor
 * http://www.musicxml.com/tutorial/file-structure/score-header-entity/
 * http://webpack.github.io/docs/webpack-dev-server.html
 * http://fr.wikipedia.org/wiki/Octave_%28musique%29
+* https://www.youtube.com/watch?v=jszRd4f3xJQ
