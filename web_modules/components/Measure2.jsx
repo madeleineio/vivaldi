@@ -12,6 +12,18 @@ class Measure2 extends React.Component {
 
         let { measure, width, height } = this.props
 
+        // reoganize measure.note by chords
+        // [1, 2 chord, 3 chord, 4, 5] => [[1,2,3], [4], [5]]
+        let chords = []
+        for (let n of measure.note) {
+            if ('chord' in n) {
+                chords[chords.length - 1].push(n)
+            } else {
+                chords.push([n])
+            }
+        }
+
+        // scale Y
         let scaleY = d3.scale.linear()
             .domain([0, measure.computed.time.beats * measure.computed.divisions])
             .range([0, height])
@@ -24,26 +36,33 @@ class Measure2 extends React.Component {
             .range(['#ff0000', '#0000ff'])
             .clamp(false)
 
+        // measur border for debug
         let measureBorder = <rect x={0} width={width} y={0} height={height} fillOpacity={0} stroke={'black'} strokeWidth={1}/>
 
         return (
             <g>
-                {measure.note.filter(n => !('chord' in n)).map((n, k) => {
-                    let y = scaleY(n.duration)
-                    let col = 'rest' in n ? 'white' : scaleColor(getIntByPitch(n.pitch))
-                    let rect = <rect
-                        key={k}
-                        transform={'translate(' + [0, currentTranslateY] + ')'}
-                        x={0}
-                        width={width}
-                        y={0}
-                        height={y}
-                        fill={col}
-                        stroke={'white'}
-                    />
+                {chords.map( (group,k) => {
+                    let y = scaleY(group[0].duration)
+                    let chordGroup = (
+                        <g key={k}>
+                            {group.map( (n, kk) => {
+                                let col = 'rest' in n ? 'white' : scaleColor(getIntByPitch(n.pitch))
+                                return (<rect
+                                    key={kk}
+                                    transform={'translate(' + [0, currentTranslateY] + ')'}
+                                    x={kk * width / group.length}
+                                    width={width / group.length}
+                                    y={0}
+                                    height={y}
+                                    fill={col}
+                                    stroke={'white'}
+                                />)
+                            }) }
+                        </g>
+                    )
                     currentTranslateY += y
-                    return rect
-                })}
+                    return chordGroup
+                } )}
             </g>
         )
     }
