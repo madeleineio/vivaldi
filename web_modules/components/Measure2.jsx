@@ -37,12 +37,12 @@ class Measure2 extends React.Component {
                         y={0}
                         height={y}
                         fill={col}
-                        stroke={col}
+                        stroke={'white'}
                     />
                     currentTranslateY += y
                     return rect
                 })}
-                <rect x={0} width={width} y={0} height={height} fillOpacity={0} stroke={'white'} strokeWidth={.5}/>
+                <rect x={0} width={width} y={0} height={height} fillOpacity={0} stroke={'black'} strokeWidth={1}/>
             </g>
         )
     }
