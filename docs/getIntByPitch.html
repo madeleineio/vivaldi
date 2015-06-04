@@ -2,7 +2,7 @@
 
 <html>
 <head>
-  <title>Measure.jsx</title>
+  <title>getIntByPitch.js</title>
   <meta http-equiv="content-type" content="text/html; charset=UTF-8">
   <meta name="viewport" content="width=device-width, target-densitydpi=160dpi, initial-scale=1.0; maximum-scale=1.0; user-scalable=0;">
   <link rel="stylesheet" media="all" href="docco.css" />
@@ -68,7 +68,7 @@
         
           <li id="title">
               <div class="annotation">
-                  <h1>Measure.jsx</h1>
+                  <h1>getIntByPitch.js</h1>
               </div>
           </li>
         
@@ -85,17 +85,9 @@
             
             <div class="content"><div class='highlight'><pre><span class="hljs-pi">'use strict'</span>
 
-<span class="hljs-keyword">import</span> React <span class="hljs-keyword">from</span> <span class="hljs-string">'react/addons.js'</span>
 <span class="hljs-keyword">import</span> d3 <span class="hljs-keyword">from</span> <span class="hljs-string">'d3/d3.js'</span>
 
-export default
-class Measure extends React.Component {
-
-    render() {
-
-        console.log(this.props.measure.computed)
-
-        let { note, computed } = this.props.measure</pre></div></div>
+const mappingStep = {</pre></div></div>
             
         </li>
         
@@ -106,14 +98,11 @@ class Measure extends React.Component {
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-2">&#182;</a>
               </div>
-              <p>scaleX : one quarter is 50px</p>
+              <p>do</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>        <span class="hljs-keyword">let</span> scaleX = d3.scale.linear()
-        .domain([<span class="hljs-number">0</span>, <span class="hljs-number">1</span>])
-        .range([<span class="hljs-number">0</span>, <span class="hljs-number">50</span>])
-        <span class="hljs-keyword">let</span> x = scaleX(computed.time.beats)</pre></div></div>
+            <div class="content"><div class='highlight'><pre>    <span class="hljs-string">'C'</span>: <span class="hljs-number">0</span>,</pre></div></div>
             
         </li>
         
@@ -124,14 +113,11 @@ class Measure extends React.Component {
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-3">&#182;</a>
               </div>
-              <p>scaleY to draw grid,</p>
+              <p>ré</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>        <span class="hljs-keyword">let</span> y = <span class="hljs-number">30</span>, numLineGrid = <span class="hljs-number">5</span>
-        <span class="hljs-keyword">let</span> scaleY = d3.scale.linear()
-            .domain([<span class="hljs-number">0</span>, numLineGrid-<span class="hljs-number">1</span>])
-            .range([<span class="hljs-number">0</span>, y])</pre></div></div>
+            <div class="content"><div class='highlight'><pre>    <span class="hljs-string">'D'</span>: <span class="hljs-number">1</span>,</pre></div></div>
             
         </li>
         
@@ -142,43 +128,89 @@ class Measure extends React.Component {
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-4">&#182;</a>
               </div>
-              <p>display notes on the whole length of the measure</p>
+              <p>mi</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>        let scaleXNote = d3.scale.linear()
-            .domain([-1, note.length])
-            .range([0, x])
+            <div class="content"><div class='highlight'><pre>    <span class="hljs-string">'E'</span>: <span class="hljs-number">2</span>,</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-5">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-5">&#182;</a>
+              </div>
+              <p>fa</p>
 
-        let style = {
-            width: x + 'px',
-            height: y + 'px',
-            backgroundColor: 'white'
-        }
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>    <span class="hljs-string">'F'</span>: <span class="hljs-number">3</span>,</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-6">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-6">&#182;</a>
+              </div>
+              <p>sol</p>
 
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>    <span class="hljs-string">'G'</span>: <span class="hljs-number">4</span>,</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-7">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-7">&#182;</a>
+              </div>
+              <p>la</p>
 
-        return (
-            &lt;span&gt;
-                &lt;svg style={style}&gt;
-                    &lt;g&gt;{ d3.range(0, numLineGrid).map(l =&gt; &lt;line key={l} x1="0" y1={scaleY(l)} x2={x} y2={scaleY(l)} stroke="black"/&gt;) }&lt;/g&gt;
-                    &lt;g&gt;
-                        &lt;line x1={x} y1="0" x2={x} y2={y} stroke="black" /&gt;
-                    &lt;/g&gt;
-                    &lt;g&gt;
-                    {note.map( (n,k) =&gt; {
-                        if('rest' in n){
-                            return &lt;rect x={scaleXNote(k)} y="13" width="10" height="4" fill="black" /&gt;
-                        }else if('pitch' in n) {
-                            return &lt;circle cx={scaleXNote(k)} cy={y/2} r="3" fill="black" /&gt;
-                        }
-                    } )}
-                    &lt;/g&gt;
-                &lt;/svg&gt;
-            &lt;/span&gt;
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>    <span class="hljs-string">'A'</span>: <span class="hljs-number">5</span>,</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-8">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-8">&#182;</a>
+              </div>
+              <p>si</p>
 
-        )
-    }
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>    <span class="hljs-string">'B'</span>: <span class="hljs-number">6</span>
+}
 
+<span class="hljs-keyword">export</span> <span class="hljs-keyword">default</span> <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">pitch</span>)</span>{</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-9">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-9">&#182;</a>
+              </div>
+              <p>notes are from 0 to 62</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>    <span class="hljs-keyword">return</span> pitch.octave * <span class="hljs-number">7</span> + mappingStep[pitch.step]
 }</pre></div></div>
             
         </li>

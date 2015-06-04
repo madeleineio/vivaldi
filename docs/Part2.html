@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+  <title>Part2.jsx</title>
+  <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+  <meta name="viewport" content="width=device-width, target-densitydpi=160dpi, initial-scale=1.0; maximum-scale=1.0; user-scalable=0;">
+  <link rel="stylesheet" media="all" href="docco.css" />
+</head>
+<body>
+  <div id="container">
+    <div id="background"></div>
+    
+      <ul id="jump_to">
+        <li>
+          <a class="large" href="javascript:void(0);">Jump To &hellip;</a>
+          <a class="small" href="javascript:void(0);">+</a>
+          <div id="jump_wrapper">
+          <div id="jump_page_wrapper">
+            <div id="jump_page">
+              
+                
+                <a class="source" href="Measure.html">
+                  Measure.jsx
+                </a>
+              
+                
+                <a class="source" href="Measure2.html">
+                  Measure2.jsx
+                </a>
+              
+                
+                <a class="source" href="Part.html">
+                  Part.jsx
+                </a>
+              
+                
+                <a class="source" href="Part2.html">
+                  Part2.jsx
+                </a>
+              
+                
+                <a class="source" href="Score.html">
+                  Score.jsx
+                </a>
+              
+                
+                <a class="source" href="Score2.html">
+                  Score2.jsx
+                </a>
+              
+                
+                <a class="source" href="getData.html">
+                  getData.js
+                </a>
+              
+                
+                <a class="source" href="getIntByPitch.html">
+                  getIntByPitch.js
+                </a>
+              
+            </div>
+          </div>
+        </li>
+      </ul>
+    
+    <ul class="sections">
+        
+          <li id="title">
+              <div class="annotation">
+                  <h1>Part2.jsx</h1>
+              </div>
+          </li>
+        
+        
+        
+        <li id="section-1">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-1">&#182;</a>
+              </div>
+              
+            </div>
+            
+            <div class="content"><div class='highlight'><pre><span class="hljs-pi">'use strict'</span>
+
+<span class="hljs-keyword">import</span> React <span class="hljs-keyword">from</span> <span class="hljs-string">'react/addons.js'</span>
+<span class="hljs-keyword">import</span> d3 <span class="hljs-keyword">from</span> <span class="hljs-string">'d3/d3.js'</span>
+
+<span class="hljs-keyword">import</span> Measure2 <span class="hljs-keyword">from</span> <span class="hljs-string">'./Measure2.jsx'</span>
+
+export default
+class Part2 extends React.Component {</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-2">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-2">&#182;</a>
+              </div>
+              <p>just one rendering</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>    shouldComponentUpdate(){
+        <span class="hljs-keyword">return</span> <span class="hljs-literal">false</span>
+    }
+
+    render() {
+
+        <span class="hljs-keyword">let</span> { part, scorePart, width, height, duration } = <span class="hljs-keyword">this</span>.props</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-3">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-3">&#182;</a>
+              </div>
+              <p>scale for a measure’s height : total duration is mapped to the total height</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>        <span class="hljs-keyword">let</span> scaleY = d3.scale.linear()
+            .domain([<span class="hljs-number">0</span>, duration])
+            .range([<span class="hljs-number">0</span>, height])</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-4">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-4">&#182;</a>
+              </div>
+              <p>current height counter</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>        <span class="hljs-keyword">let</span> currentHeight = <span class="hljs-number">0</span>
+
+        <span class="hljs-keyword">return</span> (
+            <span class="xml"><span class="hljs-tag">&lt;<span class="hljs-title">g</span>&gt;</span>
+            {part.measure.map((m, k) =&gt; {
+</span></pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-5">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-5">&#182;</a>
+              </div>
+              <p>compute height for current measure : beats by measure / tempo</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>                <span class="hljs-keyword">let</span> measureHeight = scaleY(<span class="hljs-number">1000</span> * <span class="hljs-number">60</span> * m.computed.time.beats / m.computed.sound.tempo)</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-6">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-6">&#182;</a>
+              </div>
+              <p>measure component, encapsulated in a g tag with a transform attribute</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>                <span class="hljs-keyword">let</span> measure = (
+                    <span class="xml"><span class="hljs-tag">&lt;<span class="hljs-title">g</span> <span class="hljs-attribute">key</span>=<span class="hljs-value">{k}</span> <span class="hljs-attribute">transform</span>=<span class="hljs-value">{'translate('</span> + [<span class="hljs-attribute">0</span>, <span class="hljs-attribute">currentHeight</span>] + ')'} <span class="hljs-attribute">className</span>=<span class="hljs-value">"measure"</span> &gt;</span>
+                        <span class="hljs-tag">&lt;<span class="hljs-title">Measure2</span> <span class="hljs-attribute">measure</span>=<span class="hljs-value">{m}</span> <span class="hljs-attribute">height</span>=<span class="hljs-value">{measureHeight}</span> <span class="hljs-attribute">width</span>=<span class="hljs-value">{width}</span> /&gt;</span>
+                    <span class="hljs-tag">&lt;/<span class="hljs-title">g</span>&gt;</span>
+                )</span></pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-7">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-7">&#182;</a>
+              </div>
+              <p>increment currentHeight</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>                currentHeight += measureHeight
+                return measure
+            })}
+            &lt;/g&gt;
+
+        )
+    }
+}</pre></div></div>
+            
+        </li>
+        
+    </ul>
+  </div>
+</body>
+</html>
