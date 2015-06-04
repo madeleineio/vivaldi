@@ -24,6 +24,8 @@ class Measure2 extends React.Component {
             .range(['#ff0000', '#0000ff'])
             .clamp(false)
 
+        let measureBorder = <rect x={0} width={width} y={0} height={height} fillOpacity={0} stroke={'black'} strokeWidth={1}/>
+
         return (
             <g>
                 {measure.note.filter(n => !('chord' in n)).map((n, k) => {
@@ -42,7 +44,6 @@ class Measure2 extends React.Component {
                     currentTranslateY += y
                     return rect
                 })}
-                <rect x={0} width={width} y={0} height={height} fillOpacity={0} stroke={'black'} strokeWidth={1}/>
             </g>
         )
     }

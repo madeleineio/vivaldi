@@ -16,26 +16,31 @@ class Score2 extends React.Component {
         let duration = props.score.part[0].measure.reduce((sum, curMeasure) => {
             return sum + 60. * 1000 * curMeasure.computed.time.beats / curMeasure.computed.sound.tempo
         }, 0)
-        let initialTime = (new Date()).getTime()
         this.state = {
             // currentTime in ms : start from 0
             currentTime: 0,
             // initial time
-            initialTime: initialTime,
+            initialTime: 0,
             // duration in ms
             duration: duration
         }
     }
 
+    initTime(){
+        let initialTime = (new Date()).getTime()
+        this.setState({
+            initialTime: initialTime
+        })
+    }
+
     increaseCurrentTime() {
-        console.log(this.state)
         this.setState({
             currentTime: ( (new Date()).getTime() - this.state.initialTime )
         })
     }
 
     componentDidMount() {
-        window.requestAnimationFrame(this.increaseCurrentTime.bind(this))
+        this.initTime()
     }
 
     componentDidUpdate(prevProps, prevState){
