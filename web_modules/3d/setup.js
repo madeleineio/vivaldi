@@ -4,6 +4,7 @@ import THREE from 'three/three.js'
 import OrbitControlsFactory from 'three-orbit-controls/index.js'
 import isWebglEnabled from 'detector-webgl/index.js'
 
+
 // create a scene
 let scene = new THREE.Scene()
 

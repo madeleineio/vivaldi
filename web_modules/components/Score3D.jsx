@@ -1,24 +1,60 @@
 'use strict'
 
 import React from 'react/addons.js'
-import THREE from 'three/three.js'
 import Part3D from './Part3D.jsx'
 
 export default class Score3D extends React.Component {
+
+    constructor(props) {
+        super(props)
+
+        // compute total duration of the score in ms
+        // on the first part of the score, we sum the durations of each measures : 60 * 1000 * beats by measure / tempo
+        let duration = props.score.part[0].measure.reduce((sum, curMeasure) => {
+            return sum + 60. * 1000 * curMeasure.computed.time.beats / curMeasure.computed.sound.tempo
+        }, 0)
+        this.state = {
+            // duration in ms
+            duration: duration
+        }
+    }
 
     shouldComponentUpdate(){
         return false
     }
 
     render(){
-        let { part, partList } = this.props.score
+
+        // part is an array representing the parts
+        let { part } = this.props.score
+        let { duration } = this.state
+
+        // define total width and height
         let w = 500, h = 20000
+
+        // compute width of a single part
         let partWidth = w / part.length
+
+        // x is mapped on width
+        let scaleXParts = d3.scale.linear()
+            .domain([0, part.length])
+            .range([0, w])
+
+        // y is mapped on duration
+        let scaleYTime = d3.scale.linear()
+            .domain([0, duration])
+            .range([0, h])
+
         return (
             <div>
-                {part.map((p, k) => <Part3D part={p} scorePart={partList.scorePart[k]} width={partWidth} height={h} />)}
+                {part.map((p, k) => <Part3D
+                    key={k}
+                    translateX={scaleXParts(k)}
+                    part={p}
+                    duration={duration}
+                    width={partWidth}
+                    height={h} />)}
             </div>
         )
     }
-
 }
