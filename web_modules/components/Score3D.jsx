@@ -2,8 +2,7 @@
 
 import React from 'react/addons.js'
 import THREE from 'three/three.js'
-import { renderer, scene } from '../3d/setup.js'
-
+import Part3D from './Part3D.jsx'
 
 export default class Score3D extends React.Component {
 
@@ -12,11 +11,14 @@ export default class Score3D extends React.Component {
     }
 
     render(){
-        let geometry = new THREE.BoxGeometry( 200, 300, 15 );
-        let material = new THREE.MeshBasicMaterial( {color: 0xFFff00} );
-        let cube = new THREE.Mesh( geometry, material );
-        scene.add( cube );
-        return false
+        let { part, partList } = this.props.score
+        let w = 500, h = 20000
+        let partWidth = w / part.length
+        return (
+            <div>
+                {part.map((p, k) => <Part3D part={p} scorePart={partList.scorePart[k]} width={partWidth} height={h} />)}
+            </div>
+        )
     }
 
 }

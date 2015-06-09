@@ -15,7 +15,7 @@ getData().then(data => {
     animate()
 
     React.render(
-        <Score3D />,
+        <Score3D score={data.scorePartwise} />,
         document.querySelector('#react-container')
     )
 
