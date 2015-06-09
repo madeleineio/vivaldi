@@ -35,7 +35,7 @@ scene.add(camera)
 camera.position.set(-600,0,-600)
 camera.lookAt(scene.position)
 
-let container = document.querySelector('body')
+let container = document.querySelector('#three-container')
 container.appendChild(renderer.domElement)
 
 let axis = new THREE.AxisHelper(100)

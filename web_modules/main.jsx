@@ -6,10 +6,17 @@ import { scene, camera, renderer, control } from './3d/setup.js'
 
 import animate from './3d/animate.js'
 
+import Score3D from './components/Score3D.jsx'
+
 
 // first retrieve data from server
 getData().then(data => {
 
     animate()
+
+    React.render(
+        <Score3D />,
+        document.querySelector('#react-container')
+    )
 
 })
