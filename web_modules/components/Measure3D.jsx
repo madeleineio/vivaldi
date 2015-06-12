@@ -4,7 +4,8 @@ import React from 'react/addons.js'
 import THREE from 'three/three.js'
 import { scene } from '../3d/setup.js'
 import getIntByPitch from '../services/getIntByPitch.js'
-
+import vertexShader from '../shaders/vertex.glsl'
+import fragmentShader from '../shaders/fragment.glsl'
 
 export default
 class Measure3D extends React.Component {
@@ -48,41 +49,41 @@ class Measure3D extends React.Component {
             .range(['#ff0000', '#0000ff'])
             .clamp(false)
 
-        if(ind <= 7){
-            chords.forEach((chordGroup) => {
-                let h = scaleY(chordGroup[0].duration)
-                chordGroup.forEach((note, numNote) => {
 
-                    if (!('rest' in note)) {
-                        let material = new THREE.MeshBasicMaterial( {color: scaleColor(getIntByPitch(note.pitch)), side: THREE.DoubleSide})
-                        let geometry = new THREE.BoxGeometry(
-                            width / chordGroup.length,
-                            h,
-                            10
-                        )
-                        let object = new THREE.Mesh( geometry, material )
-                        object.position.x = translateX + (numNote * width / chordGroup.length) + (width / chordGroup.length)/2
-                        object.position.y = translateY + currentTranslateY + h/2
-                        object.position.z = scaleZ(getIntByPitch(note.pitch))
+        chords.forEach((chordGroup) => {
+            let h = scaleY(chordGroup[0].duration)
+            chordGroup.forEach((note, numNote) => {
 
-                        scene.add(object)
+                if (!('rest' in note)) {
+                    let col = scaleColor(getIntByPitch(note.pitch))
+                    let shaderMaterial =   new THREE.ShaderMaterial({
+                        uniforms: {
+                            u_Color: {
+                                type: 'v4',
+                                value: new THREE.Vector4(d3.rgb(col).r / 255., d3.rgb(col).g / 255., d3.rgb(col).b / 255., 1.0)
+                            }
+                        },
+                        vertexShader:   vertexShader,
+                        fragmentShader: fragmentShader
+                    });
 
-                    }
+                    let geometry = new THREE.BoxGeometry(
+                        width / chordGroup.length,
+                        h,
+                        10
+                    )
+                    let object = new THREE.Mesh(geometry, shaderMaterial)
+                    object.position.x = translateX + (numNote * width / chordGroup.length) + (width / chordGroup.length) / 2
+                    object.position.y = translateY + currentTranslateY + h / 2
+                    object.position.z = scaleZ(getIntByPitch(note.pitch))
 
-                })
-                currentTranslateY += h
+                    scene.add(object)
+
+                }
+
             })
-        }
-
-        else {
-            let geometry = new THREE.BoxGeometry(5, 5, 5)
-            let object = new THREE.Mesh(geometry, new THREE.MeshBasicMaterial({color: 0xff0000}))
-            object.position.x = translateX;
-            object.position.y = translateY;
-            object.position.z = 0;
-            scene.add(object)
-
-        }
+            currentTranslateY += h
+        })
 
 
         // display notes organized by chords

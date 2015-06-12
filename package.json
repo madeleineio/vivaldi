@@ -22,6 +22,7 @@
     "node-libs-browser": "^0.5.2",
     "react": "^0.13.3",
     "react-hot-loader": "^1.2.7",
+    "shader-loader": "^1.1.2",
     "three": "^0.71.0",
     "three-orbit-controls": "^69.0.4",
     "webpack": "^1.9.10",

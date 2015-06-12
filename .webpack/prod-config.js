@@ -18,6 +18,11 @@ module.exports = {
             test: /\.jsx?$/,
             loaders: ['babel'],
             exclude: path.resolve('node_modules')
-        }]
-    }
+        },
+            {test: /\.glsl$/, loader: 'shader'},]
+    },
+    glsl: {
+        // chunks folder, chunkpath by default is ""
+        chunkPath: path.resolve('web_modules/shaders/chunks')
+    },
 }
