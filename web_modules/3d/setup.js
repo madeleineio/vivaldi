@@ -3,7 +3,9 @@
 import THREE from 'three/three.js'
 import OrbitControlsFactory from 'three-orbit-controls/index.js'
 import isWebglEnabled from 'detector-webgl/index.js'
+import EffectComposerFactory from 'three-effectcomposer'
 
+let EffectComposer = EffectComposerFactory(THREE)
 
 // create a scene
 let scene = new THREE.Scene()
