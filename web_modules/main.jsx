@@ -2,14 +2,21 @@ import React from 'react/addons.js'
 
 import getData from './services/getData.js'
 
-import Score2 from './components/Score2.jsx'
+import { scene, camera, renderer, control } from './3d/setup.js'
+
+import animate from './3d/animate.js'
+
+import Score3D from './components/Score3D.jsx'
+
 
 // first retrieve data from server
 getData().then(data => {
-    // then render the Score component controller
-    React.render(
-        <Score2 score={data.scorePartwise}/>,
-        document.getElementsByTagName('body')[0]
-    )
-})
 
+    animate()
+
+    React.render(
+        <Score3D score={data.scorePartwise} />,
+        document.querySelector('#react-container')
+    )
+
+})

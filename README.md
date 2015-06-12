@@ -15,3 +15,7 @@ A visualisation of Vivaldi's Flute Concerto in G minor
 * http://webpack.github.io/docs/webpack-dev-server.html
 * http://fr.wikipedia.org/wiki/Octave_%28musique%29
 * https://www.youtube.com/watch?v=jszRd4f3xJQ
+
+* https://www.npmjs.com/package/hexr-three  
+* http://jabtunes.com/labs/3d/bezierlights/ 
+* https://www.npmjs.com/package/three-effectcomposer
