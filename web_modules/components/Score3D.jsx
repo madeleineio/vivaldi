@@ -19,10 +19,6 @@ export default class Score3D extends React.Component {
         }
     }
 
-    shouldComponentUpdate(){
-        return false
-    }
-
     render(){
 
         // part is an array representing the parts
@@ -30,15 +26,15 @@ export default class Score3D extends React.Component {
         let { duration } = this.state
 
         // define total width and height
-        let w = 500, h = 20000
+        let w = 2000, h = 20000
 
         // compute width of a single part
-        let partWidth = w / (part.length * 2)
+        let partWidth = w / (part.length * 4)
 
         // x is mapped on width
         let scaleXParts = d3.scale.linear()
             .domain([0, part.length])
-            .range([0, w])
+            .range([-w/2, w/2])
 
         // y is mapped on duration
         let scaleYTime = d3.scale.linear()

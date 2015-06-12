@@ -39,7 +39,7 @@ class Measure3D extends React.Component {
         let scaleZ = d3.scale.linear()
             // 0 - 62
             .domain([15, 45])
-            .range([-300, 300])
+            .range([-500, 500])
             .clamp(false)
 
         let scaleColor = d3.scale.linear()
@@ -51,16 +51,17 @@ class Measure3D extends React.Component {
         if(ind <= 7){
             chords.forEach((chordGroup) => {
                 let h = scaleY(chordGroup[0].duration)
-                chordGroup.forEach((note) => {
+                chordGroup.forEach((note, numNote) => {
 
                     if (!('rest' in note)) {
                         let material = new THREE.MeshBasicMaterial( {color: scaleColor(getIntByPitch(note.pitch)), side: THREE.DoubleSide})
-                        let geometry = new THREE.PlaneGeometry(
+                        let geometry = new THREE.BoxGeometry(
                             width / chordGroup.length,
-                            h
+                            h,
+                            10
                         )
                         let object = new THREE.Mesh( geometry, material )
-                        object.position.x = translateX + (width / chordGroup.length)/2
+                        object.position.x = translateX + (numNote * width / chordGroup.length) + (width / chordGroup.length)/2
                         object.position.y = translateY + currentTranslateY + h/2
                         object.position.z = scaleZ(getIntByPitch(note.pitch))
 

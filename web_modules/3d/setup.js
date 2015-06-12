@@ -10,7 +10,7 @@ let scene = new THREE.Scene()
 
 let { outerWidth, outerHeight } = window
 
-let [viewAngle, aspect, near, far] = [40, outerWidth / outerHeight, .1, 20000]
+let [viewAngle, aspect, near, far] = [40, outerWidth / outerHeight, .1, 40000]
 
 // create a camera
 let camera = new THREE.PerspectiveCamera(viewAngle, aspect, near, far)
