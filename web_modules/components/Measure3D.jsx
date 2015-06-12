@@ -70,7 +70,7 @@ class Measure3D extends React.Component {
                     let geometry = new THREE.BoxGeometry(
                         width / chordGroup.length,
                         h,
-                        10
+                        5
                     )
                     let object = new THREE.Mesh(geometry, shaderMaterial)
                     object.position.x = translateX + (numNote * width / chordGroup.length) + (width / chordGroup.length) / 2
