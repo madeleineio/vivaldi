@@ -33,7 +33,7 @@ export default class Score3D extends React.Component {
         let w = 500, h = 20000
 
         // compute width of a single part
-        let partWidth = w / part.length
+        let partWidth = w / (part.length * 2)
 
         // x is mapped on width
         let scaleXParts = d3.scale.linear()
@@ -48,6 +48,7 @@ export default class Score3D extends React.Component {
         return (
             <div>
                 {part.map((p, k) => <Part3D
+                    ind={k}
                     key={k}
                     translateX={scaleXParts(k)}
                     part={p}

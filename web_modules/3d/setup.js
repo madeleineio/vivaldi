@@ -20,7 +20,7 @@ let renderer
 if(isWebglEnabled){
     renderer = new THREE.WebGLRenderer({
         antialias: true,
-        precision: 'highp'
+        //precision: 'highp'
     })
     renderer.setClearColor( 0xFFFFFF, 1 )
 } else {

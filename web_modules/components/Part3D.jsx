@@ -15,7 +15,7 @@ class Part3D extends React.Component {
 
     render() {
 
-        let { part, width, height, duration, translateX } = this.props
+        let { part, width, height, duration, translateX, ind } = this.props
 
         // scale for a measure's height : total duration is mapped to the total height
         let scaleY = d3.scale.linear()
@@ -32,6 +32,7 @@ class Part3D extends React.Component {
                     let measureHeight = scaleY(1000 * 60 * m.computed.time.beats / m.computed.sound.tempo)
                     let measure = (
                         <Measure3D
+                            ind={ind}
                             key={k}
                             measure={m}
                             translateX={translateX}
