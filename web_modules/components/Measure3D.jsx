@@ -30,7 +30,7 @@ class Measure3D extends React.Component {
             }
         }
 
-        // TODO : compute backup
+        // TODO : compute backup : we have to sort notes by voice
 
         // scale Y
         let scaleY = d3.scale.linear()
