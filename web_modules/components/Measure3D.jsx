@@ -51,9 +51,17 @@ class Measure3D extends React.Component {
             .range(['#ff0000', '#0000ff'])
             .clamp(false)
 
+        let currentVoice = 0
+
         chords.forEach((chordGroup) => {
             let h = scaleY(chordGroup[0].duration)
+
             chordGroup.forEach((note, numNote) => {
+
+                if(numNote === 0 && note.voice !== currentVoice){
+                    currentVoice = note.voice
+                    currentTranslateY = 0
+                }
 
                 if (!('rest' in note)) {
                     let col = scaleColor(getIntByPitch(note.pitch))
