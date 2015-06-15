@@ -30,6 +30,8 @@ class Measure3D extends React.Component {
             }
         }
 
+        // TODO : compute backup
+
         // scale Y
         let scaleY = d3.scale.linear()
             .domain([0, measure.computed.time.beats * measure.computed.divisions])
@@ -48,7 +50,6 @@ class Measure3D extends React.Component {
             .domain([15, 45])
             .range(['#ff0000', '#0000ff'])
             .clamp(false)
-
 
         chords.forEach((chordGroup) => {
             let h = scaleY(chordGroup[0].duration)
