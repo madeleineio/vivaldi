@@ -19,3 +19,4 @@ A visualisation of Vivaldi's Flute Concerto in G minor
 * https://www.npmjs.com/package/hexr-three  
 * http://jabtunes.com/labs/3d/bezierlights/ 
 * https://www.npmjs.com/package/three-effectcomposer
+* http://stackoverflow.com/questions/8426822/rotate-camera-in-three-js-with-mouse
