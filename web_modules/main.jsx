@@ -11,8 +11,6 @@ import Animate from './components/Animate.jsx'
 // first retrieve data from server
 getData().then(data => {
 
-    //animate()
-
     React.render(
         <div>
             <Score3D score={data.scorePartwise} />
