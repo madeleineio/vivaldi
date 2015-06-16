@@ -81,7 +81,8 @@ export default class Animate extends React.Component {
             new THREE.Vector3(1000, currentH, 0)
         ]
 
-        camera.lookAt(new THREE.Vector3(0, currentH, 0))
+        //camera.lookAt(new THREE.Vector3(0, currentH, 0))
+        //camera.position.y = currentH
 
         renderer.render(scene, camera)
         control.update()
