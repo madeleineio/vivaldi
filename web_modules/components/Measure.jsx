@@ -1,7 +1,7 @@
 'use strict'
 
 import React from 'react/addons.js'
-import d3 from 'd3/d3.js'
+import d3 from 'd3'
 
 export default
 class Measure extends React.Component {

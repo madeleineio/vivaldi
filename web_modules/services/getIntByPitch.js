@@ -1,6 +1,6 @@
 'use strict'
 
-import d3 from 'd3/d3.js'
+import d3 from 'd3'
 
 const mappingStep = {
     // do

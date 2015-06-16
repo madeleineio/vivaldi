@@ -1,4 +1,5 @@
 import React from 'react/addons.js'
+import $ from 'jquery'
 
 import getData from './services/getData.js'
 
@@ -9,14 +10,16 @@ import Animate from './components/Animate.jsx'
 
 
 // first retrieve data from server
-getData().then(data => {
+$( () =>
+        getData().then(data => {
 
-    React.render(
-        <div>
-            <Score3D score={data.scorePartwise} />
-            <Animate score={data.scorePartwise}/>
-        </div>,
-        document.querySelector('#react-container')
-    )
+            React.render(
+                <div>
+                    <Score3D score={data.scorePartwise} />
+                    <Animate score={data.scorePartwise}/>
+                </div>,
+                document.querySelector('#react-container')
+            )
 
-})
+        })
+)

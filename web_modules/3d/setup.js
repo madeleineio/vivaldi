@@ -1,8 +1,8 @@
 'use strict'
 
-import THREE from 'three/three.js'
-import OrbitControlsFactory from 'three-orbit-controls/index.js'
-import isWebglEnabled from 'detector-webgl/index.js'
+import THREE from 'three'
+import OrbitControlsFactory from 'three-orbit-controls'
+import isWebglEnabled from 'detector-webgl'
 import EffectComposerFactory from 'three-effectcomposer'
 
 let EffectComposer = EffectComposerFactory(THREE)

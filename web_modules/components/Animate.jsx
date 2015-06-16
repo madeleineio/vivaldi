@@ -1,9 +1,9 @@
 'use strict'
 
 import React from 'react/addons.js'
-import THREE from 'three/three.js'
+import THREE from 'three'
 import { scene, renderer, control, camera, composer } from '../3d/setup.js'
-import d3 from 'd3/d3.js'
+import d3 from 'd3'
 
 let line
 

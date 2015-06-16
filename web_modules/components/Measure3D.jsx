@@ -1,7 +1,7 @@
 'use strict'
 
 import React from 'react/addons.js'
-import THREE from 'three/three.js'
+import THREE from 'three'
 import { scene } from '../3d/setup.js'
 import getIntByPitch from '../services/getIntByPitch.js'
 import vertexShader from '../shaders/vertex.glsl'

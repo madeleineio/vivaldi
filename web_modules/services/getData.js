@@ -1,6 +1,6 @@
 'use strict'
 
-import $ from 'jquery/dist/jquery.js'
+import $ from 'jquery'
 
 let p = null
 

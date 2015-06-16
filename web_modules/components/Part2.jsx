@@ -1,7 +1,7 @@
 'use strict'
 
 import React from 'react/addons.js'
-import d3 from 'd3/d3.js'
+import d3 from 'd3'
 
 import Measure2 from './Measure2.jsx'
 
