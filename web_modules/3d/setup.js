@@ -31,8 +31,8 @@ if(isWebglEnabled){
 renderer.setSize( outerWidth, outerHeight )
 
 // control
-let OrbitControls = OrbitControlsFactory(THREE)
-let control = new OrbitControls(camera, renderer.domElement)
+// let OrbitControls = OrbitControlsFactory(THREE)
+// let control = new OrbitControls(camera, renderer.domElement)
 
 scene.add(camera)
 camera.position.set(-4000,0,-4000)
@@ -47,4 +47,4 @@ scene.add(axis)
 export { scene as scene }
 export { camera as camera }
 export { renderer as renderer }
-export { control as control }
+// export { control as control }

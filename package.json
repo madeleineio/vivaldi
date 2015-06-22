@@ -36,6 +36,7 @@
     "hot": "./node_modules/.bin/webpack-dev-server --config .webpack/hot-config.js --hot",
     "live": "./node_modules/.bin/webpack-dev-server --config .webpack/live-config.js",
     "prod": "./node_modules/.bin/webpack --config .webpack/prod-config.js -p",
+    "local": "./node_modules/.bin/webpack --config .webpack/prod-config.js -d --watch",
     "doc": "./node_modules/.bin/docco web_modules/**/*.js* "
   },
   "repository": {

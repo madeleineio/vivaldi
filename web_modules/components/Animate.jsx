@@ -4,10 +4,13 @@ import React from 'react/addons.js'
 import THREE from 'three'
 import { scene, renderer, control, camera, composer } from '../3d/setup.js'
 import d3 from 'd3'
+import $ from 'jquery'
+import throttle from 'lodash/function/throttle'
 
 let line
 
-export default class Animate extends React.Component {
+export default
+class Animate extends React.Component {
 
     constructor(props) {
         super(props)
@@ -34,9 +37,20 @@ export default class Animate extends React.Component {
             // initial time
             initialTime: 0,
             // duration in ms
-            duration: duration
+            duration: duration,
+
+
+            // current timeline position,
+            timelinePostion: 0,
+            //
+            isCameraMoving: false,
+            //
+            transitionStart: 0,
+            transitionCurrentTime: 0,
+            interpolationCameraPosition: null,
+            interpolationCameraLookAt: null
+
         }
-        console.log(duration / 60000)
     }
 
     initTime() {
@@ -54,6 +68,13 @@ export default class Animate extends React.Component {
 
     componentDidMount() {
         this.initTime()
+
+        $(document).on('mousewheel DOMMouseScroll',  function(e){
+            e.preventDefault()
+            // TODO : http://www.smashingmagazine.com/2014/08/25/how-i-built-the-one-page-scroll-plugin/
+            console.log('scrolled first ')
+        })
+
     }
 
     componentDidUpdate(prevProps, prevState) {
@@ -85,7 +106,7 @@ export default class Animate extends React.Component {
         //camera.position.y = currentH
 
         renderer.render(scene, camera)
-        control.update()
+        //control.update()
         return false
     }
 
