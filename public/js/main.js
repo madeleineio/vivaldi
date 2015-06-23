@@ -68831,6 +68831,11 @@
 	    _inherits(Score3D, _React$Component);
 	
 	    _createClass(Score3D, [{
+	        key: 'shouldComponentUpdate',
+	        value: function shouldComponentUpdate() {
+	            return false;
+	        }
+	    }, {
 	        key: 'render',
 	        value: function render() {
 	
@@ -78754,11 +78759,13 @@
 	
 	var _jquery2 = _interopRequireDefault(_jquery);
 	
-	var _timelineTimelineJs = __webpack_require__(/*! ../timeline/timeline.js */ 207);
+	var _timelineTimelineJs = __webpack_require__(/*! ../timeline/timeline.js */ 194);
 	
 	var _timelineTimelineJs2 = _interopRequireDefault(_timelineTimelineJs);
 	
 	var line = undefined;
+	var cameraPositionCurve = [],
+	    cameraLookAtCurve = [];
 	
 	var Animate = (function (_React$Component) {
 	    function Animate(props) {
@@ -78794,9 +78801,7 @@
 	            //
 	            transitionNum: 0,
 	            cameraPosition: new _three2['default'].Vector3(0, 0, -2000),
-	            cameraLookAt: new _three2['default'].Vector3(0, 0, 0),
-	            cameraPositionCurve: [],
-	            cameraLookAtCurve: []
+	            cameraLookAt: new _three2['default'].Vector3(0, 0, 0)
 	
 	        };
 	    }
@@ -78818,12 +78823,8 @@
 	            var initialTime = _state.initialTime;
 	            var isCameraMoving = _state.isCameraMoving;
 	            var transitionNum = _state.transitionNum;
-	            var cameraPositionCurve = _state.cameraPositionCurve;
-	            var cameraLookAtCurve = _state.cameraLookAtCurve;
 	
-	            var updatedState = {
-	                currentTime: new Date().getTime() - initialTime
-	            };
+	            var updatedState = {};
 	
 	            // camera is moving, we also compute timeline's interpolation
 	            if (isCameraMoving && transitionNum < 50) {
@@ -78840,15 +78841,13 @@
 	        key: 'launchCameraMovement',
 	        value: function launchCameraMovement() {
 	
-	            var cameraPositionCurve = new _three2['default'].QuadraticBezierCurve3(new (_bind.apply(_three2['default'].Vector3, [null].concat(_toConsumableArray(_timelineTimelineJs2['default'][0].position))))(), new (_bind.apply(_three2['default'].Vector3, [null].concat(_toConsumableArray(_timelineTimelineJs2['default'][1].position))))(), new (_bind.apply(_three2['default'].Vector3, [null].concat(_toConsumableArray(_timelineTimelineJs2['default'][2].position))))()).getPoints(50);
+	            cameraPositionCurve = new _three2['default'].QuadraticBezierCurve3(new (_bind.apply(_three2['default'].Vector3, [null].concat(_toConsumableArray(_timelineTimelineJs2['default'][0].position))))(), new (_bind.apply(_three2['default'].Vector3, [null].concat(_toConsumableArray(_timelineTimelineJs2['default'][1].position))))(), new (_bind.apply(_three2['default'].Vector3, [null].concat(_toConsumableArray(_timelineTimelineJs2['default'][2].position))))()).getPoints(50);
 	
-	            var cameraLookAtCurve = new _three2['default'].QuadraticBezierCurve3(new (_bind.apply(_three2['default'].Vector3, [null].concat(_toConsumableArray(_timelineTimelineJs2['default'][0].lookAt))))(), new (_bind.apply(_three2['default'].Vector3, [null].concat(_toConsumableArray(_timelineTimelineJs2['default'][1].lookAt))))(), new (_bind.apply(_three2['default'].Vector3, [null].concat(_toConsumableArray(_timelineTimelineJs2['default'][2].lookAt))))()).getPoints(50);
+	            cameraLookAtCurve = new _three2['default'].QuadraticBezierCurve3(new (_bind.apply(_three2['default'].Vector3, [null].concat(_toConsumableArray(_timelineTimelineJs2['default'][0].lookAt))))(), new (_bind.apply(_three2['default'].Vector3, [null].concat(_toConsumableArray(_timelineTimelineJs2['default'][1].lookAt))))(), new (_bind.apply(_three2['default'].Vector3, [null].concat(_toConsumableArray(_timelineTimelineJs2['default'][2].lookAt))))()).getPoints(50);
 	
 	            this.setState({
 	                isCameraMoving: true,
-	                transitionNum: 0,
-	                cameraPositionCurve: cameraPositionCurve,
-	                cameraLookAtCurve: cameraLookAtCurve
+	                transitionNum: 0
 	            });
 	        }
 	    }, {
@@ -78857,11 +78856,11 @@
 	            this.initTime();
 	
 	            /*$(document).on('mousewheel DOMMouseScroll',  function(e){
-	                e.preventDefault()
-	                // TODO : http://www.smashingmagazine.com/2014/08/25/how-i-built-the-one-page-scroll-plugin/
-	                console.log(e.originalEvent.detail)
-	                console.log('scrolled first ')
-	            })*/
+	             e.preventDefault()
+	             // TODO : http://www.smashingmagazine.com/2014/08/25/how-i-built-the-one-page-scroll-plugin/
+	             console.log(e.originalEvent.detail)
+	             console.log('scrolled first ')
+	             })*/
 	
 	            (0, _jquery2['default'])(document).on('click', this.launchCameraMovement.bind(this));
 	        }
@@ -78895,8 +78894,6 @@
 	            line.geometry.dynamic = true;
 	            line.geometry.vertices = [new _three2['default'].Vector3(-1000, currentH, 0), new _three2['default'].Vector3(1000, currentH, 0)];
 	
-	            console.log(cameraLookAt, cameraPosition);
-	
 	            _dSetupJs.camera.lookAt(cameraLookAt);
 	            _dSetupJs.camera.position.set(cameraPosition.x, cameraPosition.y, cameraPosition.z);
 	
@@ -78912,21 +78909,10 @@
 	exports['default'] = Animate;
 	module.exports = exports['default'];
 
+	//currentTime: ( (new Date()).getTime() - initialTime )
+
 /***/ },
-/* 194 */,
-/* 195 */,
-/* 196 */,
-/* 197 */,
-/* 198 */,
-/* 199 */,
-/* 200 */,
-/* 201 */,
-/* 202 */,
-/* 203 */,
-/* 204 */,
-/* 205 */,
-/* 206 */,
-/* 207 */
+/* 194 */
 /*!******************************************!*\
   !*** ./web_modules/timeline/timeline.js ***!
   \******************************************/

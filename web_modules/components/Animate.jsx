@@ -8,6 +8,8 @@ import $ from 'jquery'
 import timeline from '../timeline/timeline.js'
 
 let line
+let cameraPositionCurve = [],
+    cameraLookAtCurve = []
 
 export default
 class Animate extends React.Component {
@@ -47,9 +49,7 @@ class Animate extends React.Component {
             //
             transitionNum: 0,
             cameraPosition: new THREE.Vector3(0, 0, -2000),
-            cameraLookAt: new THREE.Vector3(0,0,0),
-            cameraPositionCurve: [],
-            cameraLookAtCurve: []
+            cameraLookAt: new THREE.Vector3(0, 0, 0)
 
         }
     }
@@ -62,33 +62,33 @@ class Animate extends React.Component {
     }
 
     increaseCurrentTime() {
-        let { initialTime,  isCameraMoving, transitionNum, cameraPositionCurve, cameraLookAtCurve } = this.state
+        let { initialTime,  isCameraMoving, transitionNum } = this.state
 
         let updatedState = {
-            currentTime: ( (new Date()).getTime() - initialTime )
+            //currentTime: ( (new Date()).getTime() - initialTime )
         }
 
         // camera is moving, we also compute timeline's interpolation
-        if(isCameraMoving && transitionNum < 50){
+        if (isCameraMoving && transitionNum < 50) {
             $.extend(updatedState, {
                 cameraPosition: cameraPositionCurve[transitionNum],
                 cameraLookAtCurve: cameraLookAtCurve[transitionNum],
-                transitionNum: transitionNum+1
+                transitionNum: transitionNum + 1
             })
         }
 
         this.setState(updatedState)
     }
 
-    launchCameraMovement(){
+    launchCameraMovement() {
 
-        let cameraPositionCurve = new THREE.QuadraticBezierCurve3(
+        cameraPositionCurve = new THREE.QuadraticBezierCurve3(
             new THREE.Vector3(...timeline[0].position),
             new THREE.Vector3(...timeline[1].position),
             new THREE.Vector3(...timeline[2].position)
         ).getPoints(50)
 
-        let cameraLookAtCurve = new THREE.QuadraticBezierCurve3(
+        cameraLookAtCurve = new THREE.QuadraticBezierCurve3(
             new THREE.Vector3(...timeline[0].lookAt),
             new THREE.Vector3(...timeline[1].lookAt),
             new THREE.Vector3(...timeline[2].lookAt)
@@ -97,9 +97,7 @@ class Animate extends React.Component {
 
         this.setState({
             isCameraMoving: true,
-            transitionNum: 0,
-            cameraPositionCurve: cameraPositionCurve,
-            cameraLookAtCurve: cameraLookAtCurve
+            transitionNum: 0
         })
     }
 
@@ -107,11 +105,11 @@ class Animate extends React.Component {
         this.initTime()
 
         /*$(document).on('mousewheel DOMMouseScroll',  function(e){
-            e.preventDefault()
-            // TODO : http://www.smashingmagazine.com/2014/08/25/how-i-built-the-one-page-scroll-plugin/
-            console.log(e.originalEvent.detail)
-            console.log('scrolled first ')
-        })*/
+         e.preventDefault()
+         // TODO : http://www.smashingmagazine.com/2014/08/25/how-i-built-the-one-page-scroll-plugin/
+         console.log(e.originalEvent.detail)
+         console.log('scrolled first ')
+         })*/
 
         $(document).on('click', this.launchCameraMovement.bind(this))
 
@@ -141,8 +139,6 @@ class Animate extends React.Component {
             new THREE.Vector3(-1000, currentH, 0),
             new THREE.Vector3(1000, currentH, 0)
         ]
-
-        console.log(cameraLookAt, cameraPosition)
 
         camera.lookAt(cameraLookAt)
         camera.position.set(cameraPosition.x, cameraPosition.y, cameraPosition.z)

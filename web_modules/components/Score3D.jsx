@@ -19,6 +19,10 @@ export default class Score3D extends React.Component {
         }
     }
 
+    shouldComponentUpdate(){
+        return false
+    }
+
     render(){
 
         // part is an array representing the parts
