@@ -148,7 +148,7 @@
 	// let control = new OrbitControls(camera, renderer.domElement)
 	
 	scene.add(camera);
-	camera.position.set(-4000, 0, -4000);
+	camera.position.set(0, 0, -2000);
 	camera.lookAt(scene.position);
 	
 	var container = document.querySelector('#three-container');
@@ -78722,12 +78722,15 @@
 	Object.defineProperty(exports, '__esModule', {
 	    value: true
 	});
+	var _bind = Function.prototype.bind;
 	
 	var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ('value' in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
 	
 	var _get = function get(_x, _x2, _x3) { var _again = true; _function: while (_again) { var object = _x, property = _x2, receiver = _x3; desc = parent = getter = undefined; _again = false; var desc = Object.getOwnPropertyDescriptor(object, property); if (desc === undefined) { var parent = Object.getPrototypeOf(object); if (parent === null) { return undefined; } else { _x = parent; _x2 = property; _x3 = receiver; _again = true; continue _function; } } else if ('value' in desc) { return desc.value; } else { var getter = desc.get; if (getter === undefined) { return undefined; } return getter.call(receiver); } } };
 	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
+	
+	function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr2 = Array(arr.length); i < arr.length; i++) arr2[i] = arr[i]; return arr2; } else { return Array.from(arr); } }
 	
 	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
 	
@@ -78751,9 +78754,9 @@
 	
 	var _jquery2 = _interopRequireDefault(_jquery);
 	
-	var _lodashFunctionThrottle = __webpack_require__(/*! lodash/function/throttle */ 194);
+	var _timelineTimelineJs = __webpack_require__(/*! ../timeline/timeline.js */ 207);
 	
-	var _lodashFunctionThrottle2 = _interopRequireDefault(_lodashFunctionThrottle);
+	var _timelineTimelineJs2 = _interopRequireDefault(_timelineTimelineJs);
 	
 	var line = undefined;
 	
@@ -78789,10 +78792,11 @@
 	            //
 	            isCameraMoving: false,
 	            //
-	            transitionStart: 0,
-	            transitionCurrentTime: 0,
-	            interpolationCameraPosition: null,
-	            interpolationCameraLookAt: null
+	            transitionNum: 0,
+	            cameraPosition: new _three2['default'].Vector3(0, 0, -2000),
+	            cameraLookAt: new _three2['default'].Vector3(0, 0, 0),
+	            cameraPositionCurve: [],
+	            cameraLookAtCurve: []
 	
 	        };
 	    }
@@ -78810,8 +78814,41 @@
 	    }, {
 	        key: 'increaseCurrentTime',
 	        value: function increaseCurrentTime() {
+	            var _state = this.state;
+	            var initialTime = _state.initialTime;
+	            var isCameraMoving = _state.isCameraMoving;
+	            var transitionNum = _state.transitionNum;
+	            var cameraPositionCurve = _state.cameraPositionCurve;
+	            var cameraLookAtCurve = _state.cameraLookAtCurve;
+	
+	            var updatedState = {
+	                currentTime: new Date().getTime() - initialTime
+	            };
+	
+	            // camera is moving, we also compute timeline's interpolation
+	            if (isCameraMoving && transitionNum < 50) {
+	                _jquery2['default'].extend(updatedState, {
+	                    cameraPosition: cameraPositionCurve[transitionNum],
+	                    cameraLookAtCurve: cameraLookAtCurve[transitionNum],
+	                    transitionNum: transitionNum + 1
+	                });
+	            }
+	
+	            this.setState(updatedState);
+	        }
+	    }, {
+	        key: 'launchCameraMovement',
+	        value: function launchCameraMovement() {
+	
+	            var cameraPositionCurve = new _three2['default'].QuadraticBezierCurve3(new (_bind.apply(_three2['default'].Vector3, [null].concat(_toConsumableArray(_timelineTimelineJs2['default'][0].position))))(), new (_bind.apply(_three2['default'].Vector3, [null].concat(_toConsumableArray(_timelineTimelineJs2['default'][1].position))))(), new (_bind.apply(_three2['default'].Vector3, [null].concat(_toConsumableArray(_timelineTimelineJs2['default'][2].position))))()).getPoints(50);
+	
+	            var cameraLookAtCurve = new _three2['default'].QuadraticBezierCurve3(new (_bind.apply(_three2['default'].Vector3, [null].concat(_toConsumableArray(_timelineTimelineJs2['default'][0].lookAt))))(), new (_bind.apply(_three2['default'].Vector3, [null].concat(_toConsumableArray(_timelineTimelineJs2['default'][1].lookAt))))(), new (_bind.apply(_three2['default'].Vector3, [null].concat(_toConsumableArray(_timelineTimelineJs2['default'][2].lookAt))))()).getPoints(50);
+	
 	            this.setState({
-	                currentTime: new Date().getTime() - this.state.initialTime
+	                isCameraMoving: true,
+	                transitionNum: 0,
+	                cameraPositionCurve: cameraPositionCurve,
+	                cameraLookAtCurve: cameraLookAtCurve
 	            });
 	        }
 	    }, {
@@ -78819,11 +78856,14 @@
 	        value: function componentDidMount() {
 	            this.initTime();
 	
-	            (0, _jquery2['default'])(document).on('mousewheel DOMMouseScroll', function (e) {
-	                e.preventDefault();
+	            /*$(document).on('mousewheel DOMMouseScroll',  function(e){
+	                e.preventDefault()
 	                // TODO : http://www.smashingmagazine.com/2014/08/25/how-i-built-the-one-page-scroll-plugin/
-	                console.log('scrolled first ');
-	            });
+	                console.log(e.originalEvent.detail)
+	                console.log('scrolled first ')
+	            })*/
+	
+	            (0, _jquery2['default'])(document).on('click', this.launchCameraMovement.bind(this));
 	        }
 	    }, {
 	        key: 'componentDidUpdate',
@@ -78838,9 +78878,11 @@
 	    }, {
 	        key: 'render',
 	        value: function render() {
-	            var _state = this.state;
-	            var currentTime = _state.currentTime;
-	            var duration = _state.duration;
+	            var _state2 = this.state;
+	            var currentTime = _state2.currentTime;
+	            var duration = _state2.duration;
+	            var cameraPosition = _state2.cameraPosition;
+	            var cameraLookAt = _state2.cameraLookAt;
 	
 	            var w = 2000,
 	                h = 20000;
@@ -78853,8 +78895,10 @@
 	            line.geometry.dynamic = true;
 	            line.geometry.vertices = [new _three2['default'].Vector3(-1000, currentH, 0), new _three2['default'].Vector3(1000, currentH, 0)];
 	
-	            //camera.lookAt(new THREE.Vector3(0, currentH, 0))
-	            //camera.position.y = currentH
+	            console.log(cameraLookAt, cameraPosition);
+	
+	            _dSetupJs.camera.lookAt(cameraLookAt);
+	            _dSetupJs.camera.position.set(cameraPosition.x, cameraPosition.y, cameraPosition.z);
 	
 	            _dSetupJs.renderer.render(_dSetupJs.scene, _dSetupJs.camera);
 	            //control.update()
@@ -78869,529 +78913,45 @@
 	module.exports = exports['default'];
 
 /***/ },
-/* 194 */
-/*!***************************************!*\
-  !*** ./~/lodash/function/throttle.js ***!
-  \***************************************/
+/* 194 */,
+/* 195 */,
+/* 196 */,
+/* 197 */,
+/* 198 */,
+/* 199 */,
+/* 200 */,
+/* 201 */,
+/* 202 */,
+/* 203 */,
+/* 204 */,
+/* 205 */,
+/* 206 */,
+/* 207 */
+/*!******************************************!*\
+  !*** ./web_modules/timeline/timeline.js ***!
+  \******************************************/
 /***/ function(module, exports, __webpack_require__) {
 
-	var debounce = __webpack_require__(/*! ./debounce */ 195),
-	    isObject = __webpack_require__(/*! ../lang/isObject */ 196);
+	'use strict';
 	
-	/** Used as the `TypeError` message for "Functions" methods. */
-	var FUNC_ERROR_TEXT = 'Expected a function';
-	
-	/** Used as an internal `_.debounce` options object by `_.throttle`. */
-	var debounceOptions = {
-	  'leading': false,
-	  'maxWait': 0,
-	  'trailing': false
-	};
-	
-	/**
-	 * Creates a throttled function that only invokes `func` at most once per
-	 * every `wait` milliseconds. The throttled function comes with a `cancel`
-	 * method to cancel delayed invocations. Provide an options object to indicate
-	 * that `func` should be invoked on the leading and/or trailing edge of the
-	 * `wait` timeout. Subsequent calls to the throttled function return the
-	 * result of the last `func` call.
-	 *
-	 * **Note:** If `leading` and `trailing` options are `true`, `func` is invoked
-	 * on the trailing edge of the timeout only if the the throttled function is
-	 * invoked more than once during the `wait` timeout.
-	 *
-	 * See [David Corbacho's article](http://drupalmotion.com/article/debounce-and-throttle-visual-explanation)
-	 * for details over the differences between `_.throttle` and `_.debounce`.
-	 *
-	 * @static
-	 * @memberOf _
-	 * @category Function
-	 * @param {Function} func The function to throttle.
-	 * @param {number} [wait=0] The number of milliseconds to throttle invocations to.
-	 * @param {Object} [options] The options object.
-	 * @param {boolean} [options.leading=true] Specify invoking on the leading
-	 *  edge of the timeout.
-	 * @param {boolean} [options.trailing=true] Specify invoking on the trailing
-	 *  edge of the timeout.
-	 * @returns {Function} Returns the new throttled function.
-	 * @example
-	 *
-	 * // avoid excessively updating the position while scrolling
-	 * jQuery(window).on('scroll', _.throttle(updatePosition, 100));
-	 *
-	 * // invoke `renewToken` when the click event is fired, but not more than once every 5 minutes
-	 * jQuery('.interactive').on('click', _.throttle(renewToken, 300000, {
-	 *   'trailing': false
-	 * }));
-	 *
-	 * // cancel a trailing throttled call
-	 * jQuery(window).on('popstate', throttled.cancel);
-	 */
-	function throttle(func, wait, options) {
-	  var leading = true,
-	      trailing = true;
-	
-	  if (typeof func != 'function') {
-	    throw new TypeError(FUNC_ERROR_TEXT);
-	  }
-	  if (options === false) {
-	    leading = false;
-	  } else if (isObject(options)) {
-	    leading = 'leading' in options ? !!options.leading : leading;
-	    trailing = 'trailing' in options ? !!options.trailing : trailing;
-	  }
-	  debounceOptions.leading = leading;
-	  debounceOptions.maxWait = +wait;
-	  debounceOptions.trailing = trailing;
-	  return debounce(func, wait, debounceOptions);
-	}
-	
-	module.exports = throttle;
-
-
-/***/ },
-/* 195 */
-/*!***************************************!*\
-  !*** ./~/lodash/function/debounce.js ***!
-  \***************************************/
-/***/ function(module, exports, __webpack_require__) {
-
-	var isObject = __webpack_require__(/*! ../lang/isObject */ 196),
-	    now = __webpack_require__(/*! ../date/now */ 197);
-	
-	/** Used as the `TypeError` message for "Functions" methods. */
-	var FUNC_ERROR_TEXT = 'Expected a function';
-	
-	/* Native method references for those with the same name as other `lodash` methods. */
-	var nativeMax = Math.max;
-	
-	/**
-	 * Creates a debounced function that delays invoking `func` until after `wait`
-	 * milliseconds have elapsed since the last time the debounced function was
-	 * invoked. The debounced function comes with a `cancel` method to cancel
-	 * delayed invocations. Provide an options object to indicate that `func`
-	 * should be invoked on the leading and/or trailing edge of the `wait` timeout.
-	 * Subsequent calls to the debounced function return the result of the last
-	 * `func` invocation.
-	 *
-	 * **Note:** If `leading` and `trailing` options are `true`, `func` is invoked
-	 * on the trailing edge of the timeout only if the the debounced function is
-	 * invoked more than once during the `wait` timeout.
-	 *
-	 * See [David Corbacho's article](http://drupalmotion.com/article/debounce-and-throttle-visual-explanation)
-	 * for details over the differences between `_.debounce` and `_.throttle`.
-	 *
-	 * @static
-	 * @memberOf _
-	 * @category Function
-	 * @param {Function} func The function to debounce.
-	 * @param {number} [wait=0] The number of milliseconds to delay.
-	 * @param {Object} [options] The options object.
-	 * @param {boolean} [options.leading=false] Specify invoking on the leading
-	 *  edge of the timeout.
-	 * @param {number} [options.maxWait] The maximum time `func` is allowed to be
-	 *  delayed before it is invoked.
-	 * @param {boolean} [options.trailing=true] Specify invoking on the trailing
-	 *  edge of the timeout.
-	 * @returns {Function} Returns the new debounced function.
-	 * @example
-	 *
-	 * // avoid costly calculations while the window size is in flux
-	 * jQuery(window).on('resize', _.debounce(calculateLayout, 150));
-	 *
-	 * // invoke `sendMail` when the click event is fired, debouncing subsequent calls
-	 * jQuery('#postbox').on('click', _.debounce(sendMail, 300, {
-	 *   'leading': true,
-	 *   'trailing': false
-	 * }));
-	 *
-	 * // ensure `batchLog` is invoked once after 1 second of debounced calls
-	 * var source = new EventSource('/stream');
-	 * jQuery(source).on('message', _.debounce(batchLog, 250, {
-	 *   'maxWait': 1000
-	 * }));
-	 *
-	 * // cancel a debounced call
-	 * var todoChanges = _.debounce(batchLog, 1000);
-	 * Object.observe(models.todo, todoChanges);
-	 *
-	 * Object.observe(models, function(changes) {
-	 *   if (_.find(changes, { 'user': 'todo', 'type': 'delete'})) {
-	 *     todoChanges.cancel();
-	 *   }
-	 * }, ['delete']);
-	 *
-	 * // ...at some point `models.todo` is changed
-	 * models.todo.completed = true;
-	 *
-	 * // ...before 1 second has passed `models.todo` is deleted
-	 * // which cancels the debounced `todoChanges` call
-	 * delete models.todo;
-	 */
-	function debounce(func, wait, options) {
-	  var args,
-	      maxTimeoutId,
-	      result,
-	      stamp,
-	      thisArg,
-	      timeoutId,
-	      trailingCall,
-	      lastCalled = 0,
-	      maxWait = false,
-	      trailing = true;
-	
-	  if (typeof func != 'function') {
-	    throw new TypeError(FUNC_ERROR_TEXT);
-	  }
-	  wait = wait < 0 ? 0 : (+wait || 0);
-	  if (options === true) {
-	    var leading = true;
-	    trailing = false;
-	  } else if (isObject(options)) {
-	    leading = options.leading;
-	    maxWait = 'maxWait' in options && nativeMax(+options.maxWait || 0, wait);
-	    trailing = 'trailing' in options ? options.trailing : trailing;
-	  }
-	
-	  function cancel() {
-	    if (timeoutId) {
-	      clearTimeout(timeoutId);
-	    }
-	    if (maxTimeoutId) {
-	      clearTimeout(maxTimeoutId);
-	    }
-	    maxTimeoutId = timeoutId = trailingCall = undefined;
-	  }
-	
-	  function delayed() {
-	    var remaining = wait - (now() - stamp);
-	    if (remaining <= 0 || remaining > wait) {
-	      if (maxTimeoutId) {
-	        clearTimeout(maxTimeoutId);
-	      }
-	      var isCalled = trailingCall;
-	      maxTimeoutId = timeoutId = trailingCall = undefined;
-	      if (isCalled) {
-	        lastCalled = now();
-	        result = func.apply(thisArg, args);
-	        if (!timeoutId && !maxTimeoutId) {
-	          args = thisArg = null;
-	        }
-	      }
-	    } else {
-	      timeoutId = setTimeout(delayed, remaining);
-	    }
-	  }
-	
-	  function maxDelayed() {
-	    if (timeoutId) {
-	      clearTimeout(timeoutId);
-	    }
-	    maxTimeoutId = timeoutId = trailingCall = undefined;
-	    if (trailing || (maxWait !== wait)) {
-	      lastCalled = now();
-	      result = func.apply(thisArg, args);
-	      if (!timeoutId && !maxTimeoutId) {
-	        args = thisArg = null;
-	      }
-	    }
-	  }
-	
-	  function debounced() {
-	    args = arguments;
-	    stamp = now();
-	    thisArg = this;
-	    trailingCall = trailing && (timeoutId || !leading);
-	
-	    if (maxWait === false) {
-	      var leadingCall = leading && !timeoutId;
-	    } else {
-	      if (!maxTimeoutId && !leading) {
-	        lastCalled = stamp;
-	      }
-	      var remaining = maxWait - (stamp - lastCalled),
-	          isCalled = remaining <= 0 || remaining > maxWait;
-	
-	      if (isCalled) {
-	        if (maxTimeoutId) {
-	          maxTimeoutId = clearTimeout(maxTimeoutId);
-	        }
-	        lastCalled = stamp;
-	        result = func.apply(thisArg, args);
-	      }
-	      else if (!maxTimeoutId) {
-	        maxTimeoutId = setTimeout(maxDelayed, remaining);
-	      }
-	    }
-	    if (isCalled && timeoutId) {
-	      timeoutId = clearTimeout(timeoutId);
-	    }
-	    else if (!timeoutId && wait !== maxWait) {
-	      timeoutId = setTimeout(delayed, wait);
-	    }
-	    if (leadingCall) {
-	      isCalled = true;
-	      result = func.apply(thisArg, args);
-	    }
-	    if (isCalled && !timeoutId && !maxTimeoutId) {
-	      args = thisArg = null;
-	    }
-	    return result;
-	  }
-	  debounced.cancel = cancel;
-	  return debounced;
-	}
-	
-	module.exports = debounce;
-
-
-/***/ },
-/* 196 */
-/*!***********************************!*\
-  !*** ./~/lodash/lang/isObject.js ***!
-  \***********************************/
-/***/ function(module, exports, __webpack_require__) {
-
-	/**
-	 * Checks if `value` is the [language type](https://es5.github.io/#x8) of `Object`.
-	 * (e.g. arrays, functions, objects, regexes, `new Number(0)`, and `new String('')`)
-	 *
-	 * @static
-	 * @memberOf _
-	 * @category Lang
-	 * @param {*} value The value to check.
-	 * @returns {boolean} Returns `true` if `value` is an object, else `false`.
-	 * @example
-	 *
-	 * _.isObject({});
-	 * // => true
-	 *
-	 * _.isObject([1, 2, 3]);
-	 * // => true
-	 *
-	 * _.isObject(1);
-	 * // => false
-	 */
-	function isObject(value) {
-	  // Avoid a V8 JIT bug in Chrome 19-20.
-	  // See https://code.google.com/p/v8/issues/detail?id=2291 for more details.
-	  var type = typeof value;
-	  return !!value && (type == 'object' || type == 'function');
-	}
-	
-	module.exports = isObject;
-
-
-/***/ },
-/* 197 */
-/*!******************************!*\
-  !*** ./~/lodash/date/now.js ***!
-  \******************************/
-/***/ function(module, exports, __webpack_require__) {
-
-	var getNative = __webpack_require__(/*! ../internal/getNative */ 198);
-	
-	/* Native method references for those with the same name as other `lodash` methods. */
-	var nativeNow = getNative(Date, 'now');
-	
-	/**
-	 * Gets the number of milliseconds that have elapsed since the Unix epoch
-	 * (1 January 1970 00:00:00 UTC).
-	 *
-	 * @static
-	 * @memberOf _
-	 * @category Date
-	 * @example
-	 *
-	 * _.defer(function(stamp) {
-	 *   console.log(_.now() - stamp);
-	 * }, _.now());
-	 * // => logs the number of milliseconds it took for the deferred function to be invoked
-	 */
-	var now = nativeNow || function() {
-	  return new Date().getTime();
-	};
-	
-	module.exports = now;
-
-
-/***/ },
-/* 198 */
-/*!****************************************!*\
-  !*** ./~/lodash/internal/getNative.js ***!
-  \****************************************/
-/***/ function(module, exports, __webpack_require__) {
-
-	var isNative = __webpack_require__(/*! ../lang/isNative */ 199);
-	
-	/**
-	 * Gets the native function at `key` of `object`.
-	 *
-	 * @private
-	 * @param {Object} object The object to query.
-	 * @param {string} key The key of the method to get.
-	 * @returns {*} Returns the function if it's native, else `undefined`.
-	 */
-	function getNative(object, key) {
-	  var value = object == null ? undefined : object[key];
-	  return isNative(value) ? value : undefined;
-	}
-	
-	module.exports = getNative;
-
-
-/***/ },
-/* 199 */
-/*!***********************************!*\
-  !*** ./~/lodash/lang/isNative.js ***!
-  \***********************************/
-/***/ function(module, exports, __webpack_require__) {
-
-	var escapeRegExp = __webpack_require__(/*! ../string/escapeRegExp */ 200),
-	    isObjectLike = __webpack_require__(/*! ../internal/isObjectLike */ 202);
-	
-	/** `Object#toString` result references. */
-	var funcTag = '[object Function]';
-	
-	/** Used to detect host constructors (Safari > 5). */
-	var reIsHostCtor = /^\[object .+?Constructor\]$/;
-	
-	/** Used for native method references. */
-	var objectProto = Object.prototype;
-	
-	/** Used to resolve the decompiled source of functions. */
-	var fnToString = Function.prototype.toString;
-	
-	/** Used to check objects for own properties. */
-	var hasOwnProperty = objectProto.hasOwnProperty;
-	
-	/**
-	 * Used to resolve the [`toStringTag`](https://people.mozilla.org/~jorendorff/es6-draft.html#sec-object.prototype.tostring)
-	 * of values.
-	 */
-	var objToString = objectProto.toString;
-	
-	/** Used to detect if a method is native. */
-	var reIsNative = RegExp('^' +
-	  escapeRegExp(fnToString.call(hasOwnProperty))
-	  .replace(/hasOwnProperty|(function).*?(?=\\\()| for .+?(?=\\\])/g, '$1.*?') + '$'
-	);
-	
-	/**
-	 * Checks if `value` is a native function.
-	 *
-	 * @static
-	 * @memberOf _
-	 * @category Lang
-	 * @param {*} value The value to check.
-	 * @returns {boolean} Returns `true` if `value` is a native function, else `false`.
-	 * @example
-	 *
-	 * _.isNative(Array.prototype.push);
-	 * // => true
-	 *
-	 * _.isNative(_);
-	 * // => false
-	 */
-	function isNative(value) {
-	  if (value == null) {
-	    return false;
-	  }
-	  if (objToString.call(value) == funcTag) {
-	    return reIsNative.test(fnToString.call(value));
-	  }
-	  return isObjectLike(value) && reIsHostCtor.test(value);
-	}
-	
-	module.exports = isNative;
-
-
-/***/ },
-/* 200 */
-/*!*****************************************!*\
-  !*** ./~/lodash/string/escapeRegExp.js ***!
-  \*****************************************/
-/***/ function(module, exports, __webpack_require__) {
-
-	var baseToString = __webpack_require__(/*! ../internal/baseToString */ 201);
-	
-	/**
-	 * Used to match `RegExp` [special characters](http://www.regular-expressions.info/characters.html#special).
-	 * In addition to special characters the forward slash is escaped to allow for
-	 * easier `eval` use and `Function` compilation.
-	 */
-	var reRegExpChars = /[.*+?^${}()|[\]\/\\]/g,
-	    reHasRegExpChars = RegExp(reRegExpChars.source);
-	
-	/**
-	 * Escapes the `RegExp` special characters "\", "/", "^", "$", ".", "|", "?",
-	 * "*", "+", "(", ")", "[", "]", "{" and "}" in `string`.
-	 *
-	 * @static
-	 * @memberOf _
-	 * @category String
-	 * @param {string} [string=''] The string to escape.
-	 * @returns {string} Returns the escaped string.
-	 * @example
-	 *
-	 * _.escapeRegExp('[lodash](https://lodash.com/)');
-	 * // => '\[lodash\]\(https:\/\/lodash\.com\/\)'
-	 */
-	function escapeRegExp(string) {
-	  string = baseToString(string);
-	  return (string && reHasRegExpChars.test(string))
-	    ? string.replace(reRegExpChars, '\\$&')
-	    : string;
-	}
-	
-	module.exports = escapeRegExp;
-
-
-/***/ },
-/* 201 */
-/*!*******************************************!*\
-  !*** ./~/lodash/internal/baseToString.js ***!
-  \*******************************************/
-/***/ function(module, exports, __webpack_require__) {
-
-	/**
-	 * Converts `value` to a string if it's not one. An empty string is returned
-	 * for `null` or `undefined` values.
-	 *
-	 * @private
-	 * @param {*} value The value to process.
-	 * @returns {string} Returns the string.
-	 */
-	function baseToString(value) {
-	  if (typeof value == 'string') {
-	    return value;
-	  }
-	  return value == null ? '' : (value + '');
-	}
-	
-	module.exports = baseToString;
-
-
-/***/ },
-/* 202 */
-/*!*******************************************!*\
-  !*** ./~/lodash/internal/isObjectLike.js ***!
-  \*******************************************/
-/***/ function(module, exports, __webpack_require__) {
-
-	/**
-	 * Checks if `value` is object-like.
-	 *
-	 * @private
-	 * @param {*} value The value to check.
-	 * @returns {boolean} Returns `true` if `value` is object-like, else `false`.
-	 */
-	function isObjectLike(value) {
-	  return !!value && typeof value == 'object';
-	}
-	
-	module.exports = isObjectLike;
-
+	Object.defineProperty(exports, '__esModule', {
+	    value: true
+	});
+	exports['default'] = [{
+	    text: 'Visualisation du concerto pour flute RV 439 de Vivaldi - scrollez pour continuer',
+	    position: [0, 0, -2000],
+	    lookAt: [0, 0, 0]
+	}, {
+	    text: '',
+	    position: [3000, 1000, 0],
+	    movements: 50,
+	    lookAt: [0, 1000, 0]
+	}, {
+	    text: '',
+	    position: [2000, 2000, 1000],
+	    lookAt: [0, 2000, 0]
+	}];
+	module.exports = exports['default'];
 
 /***/ }
 /******/ ]);

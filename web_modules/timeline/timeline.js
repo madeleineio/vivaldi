@@ -7,7 +7,7 @@ export default [{
 },{
     text: '',
     position: [3000, 1000, 0],
-    duration: 2000,
+    movements: 50,
     lookAt: [0, 1000, 0]
 },{
     text: '',

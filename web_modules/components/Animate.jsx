@@ -5,7 +5,7 @@ import THREE from 'three'
 import { scene, renderer, control, camera, composer } from '../3d/setup.js'
 import d3 from 'd3'
 import $ from 'jquery'
-import throttle from 'lodash/function/throttle'
+import timeline from '../timeline/timeline.js'
 
 let line
 
@@ -45,10 +45,11 @@ class Animate extends React.Component {
             //
             isCameraMoving: false,
             //
-            transitionStart: 0,
-            transitionCurrentTime: 0,
-            interpolationCameraPosition: null,
-            interpolationCameraLookAt: null
+            transitionNum: 0,
+            cameraPosition: new THREE.Vector3(0, 0, -2000),
+            cameraLookAt: new THREE.Vector3(0,0,0),
+            cameraPositionCurve: [],
+            cameraLookAtCurve: []
 
         }
     }
@@ -61,19 +62,58 @@ class Animate extends React.Component {
     }
 
     increaseCurrentTime() {
+        let { initialTime,  isCameraMoving, transitionNum, cameraPositionCurve, cameraLookAtCurve } = this.state
+
+        let updatedState = {
+            currentTime: ( (new Date()).getTime() - initialTime )
+        }
+
+        // camera is moving, we also compute timeline's interpolation
+        if(isCameraMoving && transitionNum < 50){
+            $.extend(updatedState, {
+                cameraPosition: cameraPositionCurve[transitionNum],
+                cameraLookAtCurve: cameraLookAtCurve[transitionNum],
+                transitionNum: transitionNum+1
+            })
+        }
+
+        this.setState(updatedState)
+    }
+
+    launchCameraMovement(){
+
+        let cameraPositionCurve = new THREE.QuadraticBezierCurve3(
+            new THREE.Vector3(...timeline[0].position),
+            new THREE.Vector3(...timeline[1].position),
+            new THREE.Vector3(...timeline[2].position)
+        ).getPoints(50)
+
+        let cameraLookAtCurve = new THREE.QuadraticBezierCurve3(
+            new THREE.Vector3(...timeline[0].lookAt),
+            new THREE.Vector3(...timeline[1].lookAt),
+            new THREE.Vector3(...timeline[2].lookAt)
+        ).getPoints(50)
+
+
         this.setState({
-            currentTime: ( (new Date()).getTime() - this.state.initialTime )
+            isCameraMoving: true,
+            transitionNum: 0,
+            cameraPositionCurve: cameraPositionCurve,
+            cameraLookAtCurve: cameraLookAtCurve
         })
     }
 
     componentDidMount() {
         this.initTime()
 
-        $(document).on('mousewheel DOMMouseScroll',  function(e){
+        /*$(document).on('mousewheel DOMMouseScroll',  function(e){
             e.preventDefault()
             // TODO : http://www.smashingmagazine.com/2014/08/25/how-i-built-the-one-page-scroll-plugin/
+            console.log(e.originalEvent.detail)
             console.log('scrolled first ')
-        })
+        })*/
+
+        $(document).on('click', this.launchCameraMovement.bind(this))
 
     }
 
@@ -86,7 +126,7 @@ class Animate extends React.Component {
 
     render() {
 
-        let {currentTime, duration } = this.state
+        let {currentTime, duration, cameraPosition, cameraLookAt } = this.state
         let w = 2000, h = 20000
 
         let scaleY = d3.scale.linear()
@@ -102,8 +142,10 @@ class Animate extends React.Component {
             new THREE.Vector3(1000, currentH, 0)
         ]
 
-        //camera.lookAt(new THREE.Vector3(0, currentH, 0))
-        //camera.position.y = currentH
+        console.log(cameraLookAt, cameraPosition)
+
+        camera.lookAt(cameraLookAt)
+        camera.position.set(cameraPosition.x, cameraPosition.y, cameraPosition.z)
 
         renderer.render(scene, camera)
         //control.update()

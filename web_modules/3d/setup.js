@@ -35,7 +35,7 @@ renderer.setSize( outerWidth, outerHeight )
 // let control = new OrbitControls(camera, renderer.domElement)
 
 scene.add(camera)
-camera.position.set(-4000,0,-4000)
+camera.position.set(0, 0, -2000)
 camera.lookAt(scene.position)
 
 let container = document.querySelector('#three-container')
