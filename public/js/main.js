@@ -61,15 +61,17 @@
 	
 	var _dSetupJs = __webpack_require__(/*! ./3d/setup.js */ 3);
 	
-	var _componentsScoreJs = __webpack_require__(/*! ./components/Score.js */ 13);
+	var _dSetupJs2 = _interopRequireDefault(_dSetupJs);
+	
+	var _componentsScoreJs = __webpack_require__(/*! ./components/Score.js */ 6);
 	
 	var _componentsScoreJs2 = _interopRequireDefault(_componentsScoreJs);
 	
 	// first retrieve data from server
 	(0, _jquery2['default'])(function () {
-	    return (0, _servicesGetDataJs2['default'])().then(function (data) {
+	    return Promise.all([(0, _servicesGetDataJs2['default'])(), (0, _dSetupJs2['default'])()]).then(function (data) {
 	        new _componentsScoreJs2['default']({
-	            score: data.scorePartwise
+	            score: data[0].scorePartwise
 	        }).render();
 	    });
 	});
@@ -9388,7 +9390,6 @@
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
-	
 	Object.defineProperty(exports, '__esModule', {
 	    value: true
 	});
@@ -9399,65 +9400,63 @@
 	
 	var _three2 = _interopRequireDefault(_three);
 	
-	var _threeOrbitControls = __webpack_require__(/*! three-orbit-controls */ 5);
-	
-	var _threeOrbitControls2 = _interopRequireDefault(_threeOrbitControls);
-	
-	var _detectorWebgl = __webpack_require__(/*! detector-webgl */ 6);
+	var _detectorWebgl = __webpack_require__(/*! detector-webgl */ 5);
 	
 	var _detectorWebgl2 = _interopRequireDefault(_detectorWebgl);
 	
-	var _threeEffectcomposer = __webpack_require__(/*! three-effectcomposer */ 7);
+	// we do not instantiate the promise initially, we let the main module call the exported function first after the dom ready
+	// to be sure to have the good width and height
+	var p = undefined;
 	
-	var _threeEffectcomposer2 = _interopRequireDefault(_threeEffectcomposer);
+	exports['default'] = function () {
+	    if (!p) {
+	        p = new Promise(function (resolve) {
+	            // create a scene
+	            var scene = new _three2['default'].Scene();
+	            var outerWidth = window.outerWidth;
+	            var outerHeight = window.outerHeight;
+	            var viewAngle = 40;
+	            var aspect = outerWidth / outerHeight;
+	            var near = 0.1;
+	            var far = 40000;
 	
-	var EffectComposer = (0, _threeEffectcomposer2['default'])(_three2['default']);
+	            // create a camera
+	            var camera = new _three2['default'].PerspectiveCamera(viewAngle, aspect, near, far);
 	
-	// create a scene
-	var scene = new _three2['default'].Scene();
+	            // renderer
+	            var renderer = undefined;
+	            if (_detectorWebgl2['default']) {
+	                renderer = new _three2['default'].WebGLRenderer({
+	                    antialias: true
+	                    //precision: 'highp'
+	                });
+	                renderer.setClearColor(16777215, 1);
+	            } else {
+	                renderer = new _three2['default'].CanvasRenderer();
+	            }
+	            renderer.setSize(outerWidth, outerHeight);
 	
-	var outerWidth = window.outerWidth;
-	var outerHeight = window.outerHeight;
-	var viewAngle = 40;
-	var aspect = outerWidth / outerHeight;
-	var near = 0.1;
-	var far = 40000;
+	            scene.add(camera);
+	            camera.position.set(0, 0, -2000);
+	            camera.lookAt(scene.position);
 	
-	// create a camera
-	var camera = new _three2['default'].PerspectiveCamera(viewAngle, aspect, near, far);
+	            var container = document.querySelector('#three-container');
+	            container.appendChild(renderer.domElement);
 	
-	// renderer
-	var renderer = undefined;
-	if (_detectorWebgl2['default']) {
-	    exports.renderer = renderer = new _three2['default'].WebGLRenderer({
-	        antialias: true });
-	    renderer.setClearColor(16777215, 1);
-	} else {
-	    exports.renderer = renderer = new _three2['default'].CanvasRenderer();
-	}
-	renderer.setSize(outerWidth, outerHeight);
+	            var axis = new _three2['default'].AxisHelper(100);
+	            scene.add(axis);
 	
-	// control
-	// let OrbitControls = OrbitControlsFactory(THREE)
-	// let control = new OrbitControls(camera, renderer.domElement)
+	            resolve({
+	                scene: scene,
+	                camera: camera,
+	                renderer: renderer
+	            });
+	        });
+	    }
+	    return p;
+	};
 	
-	scene.add(camera);
-	camera.position.set(0, 0, -2000);
-	camera.lookAt(scene.position);
-	
-	var container = document.querySelector('#three-container');
-	container.appendChild(renderer.domElement);
-	
-	var axis = new _three2['default'].AxisHelper(100);
-	scene.add(axis);
-	
-	exports.scene = scene;
-	exports.camera = camera;
-	exports.renderer = renderer;
-	
-	// export { control as control }
-
-	//precision: 'highp'
+	module.exports = exports['default'];
 
 /***/ },
 /* 4 */
@@ -44616,695 +44615,6 @@
 
 /***/ },
 /* 5 */
-/*!*****************************************!*\
-  !*** ./~/three-orbit-controls/index.js ***!
-  \*****************************************/
-/***/ function(module, exports, __webpack_require__) {
-
-	module.exports = function(THREE) {
-	    var MOUSE = THREE.MOUSE
-	    if (!MOUSE)
-	        MOUSE = { LEFT: 0, MIDDLE: 1, RIGHT: 2 };
-	    
-	    /**
-	     * @author qiao / https://github.com/qiao
-	     * @author mrdoob / http://mrdoob.com
-	     * @author alteredq / http://alteredqualia.com/
-	     * @author WestLangley / http://github.com/WestLangley
-	     * @author erich666 / http://erichaines.com
-	     */
-	    /*global THREE, console */
-	
-	    // This set of controls performs orbiting, dollying (zooming), and panning. It maintains
-	    // the "up" direction as +Y, unlike the TrackballControls. Touch on tablet and phones is
-	    // supported.
-	    //
-	    //    Orbit - left mouse / touch: one finger move
-	    //    Zoom - middle mouse, or mousewheel / touch: two finger spread or squish
-	    //    Pan - right mouse, or arrow keys / touch: three finter swipe
-	    //
-	    // This is a drop-in replacement for (most) TrackballControls used in examples.
-	    // That is, include this js file and wherever you see:
-	    //      controls = new THREE.TrackballControls( camera );
-	    //      controls.target.z = 150;
-	    // Simple substitute "OrbitControls" and the control should work as-is.
-	
-	    function OrbitControls ( object, domElement ) {
-	
-	        this.object = object;
-	        this.domElement = ( domElement !== undefined ) ? domElement : document;
-	
-	        // API
-	
-	        // Set to false to disable this control
-	        this.enabled = true;
-	
-	        // "target" sets the location of focus, where the control orbits around
-	        // and where it pans with respect to.
-	        this.target = new THREE.Vector3();
-	
-	        // center is old, deprecated; use "target" instead
-	        this.center = this.target;
-	
-	        // This option actually enables dollying in and out; left as "zoom" for
-	        // backwards compatibility
-	        this.noZoom = false;
-	        this.zoomSpeed = 1.0;
-	
-	        // Limits to how far you can dolly in and out
-	        this.minDistance = 0;
-	        this.maxDistance = Infinity;
-	
-	        // Set to true to disable this control
-	        this.noRotate = false;
-	        this.rotateSpeed = 1.0;
-	
-	        // Set to true to disable this control
-	        this.noPan = false;
-	        this.keyPanSpeed = 7.0; // pixels moved per arrow key push
-	
-	        // Set to true to automatically rotate around the target
-	        this.autoRotate = false;
-	        this.autoRotateSpeed = 2.0; // 30 seconds per round when fps is 60
-	
-	        // How far you can orbit vertically, upper and lower limits.
-	        // Range is 0 to Math.PI radians.
-	        this.minPolarAngle = 0; // radians
-	        this.maxPolarAngle = Math.PI; // radians
-	
-	        // How far you can orbit horizontally, upper and lower limits.
-	        // If set, must be a sub-interval of the interval [ - Math.PI, Math.PI ].
-	        this.minAzimuthAngle = - Infinity; // radians
-	        this.maxAzimuthAngle = Infinity; // radians
-	
-	        // Set to true to disable use of the keys
-	        this.noKeys = false;
-	
-	        // The four arrow keys
-	        this.keys = { LEFT: 37, UP: 38, RIGHT: 39, BOTTOM: 40 };
-	
-	        // Mouse buttons
-	        this.mouseButtons = { ORBIT: MOUSE.LEFT, ZOOM: MOUSE.MIDDLE, PAN: MOUSE.RIGHT };
-	
-	        ////////////
-	        // internals
-	
-	        var scope = this;
-	
-	        var EPS = 0.000001;
-	
-	        var rotateStart = new THREE.Vector2();
-	        var rotateEnd = new THREE.Vector2();
-	        var rotateDelta = new THREE.Vector2();
-	
-	        var panStart = new THREE.Vector2();
-	        var panEnd = new THREE.Vector2();
-	        var panDelta = new THREE.Vector2();
-	        var panOffset = new THREE.Vector3();
-	
-	        var offset = new THREE.Vector3();
-	
-	        var dollyStart = new THREE.Vector2();
-	        var dollyEnd = new THREE.Vector2();
-	        var dollyDelta = new THREE.Vector2();
-	
-	        var theta;
-	        var phi;
-	        var phiDelta = 0;
-	        var thetaDelta = 0;
-	        var scale = 1;
-	        var pan = new THREE.Vector3();
-	
-	        var lastPosition = new THREE.Vector3();
-	        var lastQuaternion = new THREE.Quaternion();
-	
-	        var STATE = { NONE : -1, ROTATE : 0, DOLLY : 1, PAN : 2, TOUCH_ROTATE : 3, TOUCH_DOLLY : 4, TOUCH_PAN : 5 };
-	
-	        var state = STATE.NONE;
-	
-	        // for reset
-	
-	        this.target0 = this.target.clone();
-	        this.position0 = this.object.position.clone();
-	
-	        // so camera.up is the orbit axis
-	
-	        var quat = new THREE.Quaternion().setFromUnitVectors( object.up, new THREE.Vector3( 0, 1, 0 ) );
-	        var quatInverse = quat.clone().inverse();
-	
-	        // events
-	
-	        var changeEvent = { type: 'change' };
-	        var startEvent = { type: 'start'};
-	        var endEvent = { type: 'end'};
-	
-	        this.rotateLeft = function ( angle ) {
-	
-	            if ( angle === undefined ) {
-	
-	                angle = getAutoRotationAngle();
-	
-	            }
-	
-	            thetaDelta -= angle;
-	
-	        };
-	
-	        this.rotateUp = function ( angle ) {
-	
-	            if ( angle === undefined ) {
-	
-	                angle = getAutoRotationAngle();
-	
-	            }
-	
-	            phiDelta -= angle;
-	
-	        };
-	
-	        // pass in distance in world space to move left
-	        this.panLeft = function ( distance ) {
-	
-	            var te = this.object.matrix.elements;
-	
-	            // get X column of matrix
-	            panOffset.set( te[ 0 ], te[ 1 ], te[ 2 ] );
-	            panOffset.multiplyScalar( - distance );
-	
-	            pan.add( panOffset );
-	
-	        };
-	
-	        // pass in distance in world space to move up
-	        this.panUp = function ( distance ) {
-	
-	            var te = this.object.matrix.elements;
-	
-	            // get Y column of matrix
-	            panOffset.set( te[ 4 ], te[ 5 ], te[ 6 ] );
-	            panOffset.multiplyScalar( distance );
-	
-	            pan.add( panOffset );
-	
-	        };
-	
-	        // pass in x,y of change desired in pixel space,
-	        // right and down are positive
-	        this.pan = function ( deltaX, deltaY ) {
-	
-	            var element = scope.domElement === document ? scope.domElement.body : scope.domElement;
-	
-	            if ( scope.object.fov !== undefined ) {
-	
-	                // perspective
-	                var position = scope.object.position;
-	                var offset = position.clone().sub( scope.target );
-	                var targetDistance = offset.length();
-	
-	                // half of the fov is center to top of screen
-	                targetDistance *= Math.tan( ( scope.object.fov / 2 ) * Math.PI / 180.0 );
-	
-	                // we actually don't use screenWidth, since perspective camera is fixed to screen height
-	                scope.panLeft( 2 * deltaX * targetDistance / element.clientHeight );
-	                scope.panUp( 2 * deltaY * targetDistance / element.clientHeight );
-	
-	            } else if ( scope.object.top !== undefined ) {
-	
-	                // orthographic
-	                scope.panLeft( deltaX * (scope.object.right - scope.object.left) / element.clientWidth );
-	                scope.panUp( deltaY * (scope.object.top - scope.object.bottom) / element.clientHeight );
-	
-	            } else {
-	
-	                // camera neither orthographic or perspective
-	                console.warn( 'WARNING: OrbitControls.js encountered an unknown camera type - pan disabled.' );
-	
-	            }
-	
-	        };
-	
-	        this.dollyIn = function ( dollyScale ) {
-	
-	            if ( dollyScale === undefined ) {
-	
-	                dollyScale = getZoomScale();
-	
-	            }
-	
-	            scale /= dollyScale;
-	
-	        };
-	
-	        this.dollyOut = function ( dollyScale ) {
-	
-	            if ( dollyScale === undefined ) {
-	
-	                dollyScale = getZoomScale();
-	
-	            }
-	
-	            scale *= dollyScale;
-	
-	        };
-	
-	        this.update = function () {
-	
-	            var position = this.object.position;
-	
-	            offset.copy( position ).sub( this.target );
-	
-	            // rotate offset to "y-axis-is-up" space
-	            offset.applyQuaternion( quat );
-	
-	            // angle from z-axis around y-axis
-	
-	            theta = Math.atan2( offset.x, offset.z );
-	
-	            // angle from y-axis
-	
-	            phi = Math.atan2( Math.sqrt( offset.x * offset.x + offset.z * offset.z ), offset.y );
-	
-	            if ( this.autoRotate && state === STATE.NONE ) {
-	
-	                this.rotateLeft( getAutoRotationAngle() );
-	
-	            }
-	
-	            theta += thetaDelta;
-	            phi += phiDelta;
-	
-	            // restrict theta to be between desired limits
-	            theta = Math.max( this.minAzimuthAngle, Math.min( this.maxAzimuthAngle, theta ) );
-	
-	            // restrict phi to be between desired limits
-	            phi = Math.max( this.minPolarAngle, Math.min( this.maxPolarAngle, phi ) );
-	
-	            // restrict phi to be betwee EPS and PI-EPS
-	            phi = Math.max( EPS, Math.min( Math.PI - EPS, phi ) );
-	
-	            var radius = offset.length() * scale;
-	
-	            // restrict radius to be between desired limits
-	            radius = Math.max( this.minDistance, Math.min( this.maxDistance, radius ) );
-	
-	            // move target to panned location
-	            this.target.add( pan );
-	
-	            offset.x = radius * Math.sin( phi ) * Math.sin( theta );
-	            offset.y = radius * Math.cos( phi );
-	            offset.z = radius * Math.sin( phi ) * Math.cos( theta );
-	
-	            // rotate offset back to "camera-up-vector-is-up" space
-	            offset.applyQuaternion( quatInverse );
-	
-	            position.copy( this.target ).add( offset );
-	
-	            this.object.lookAt( this.target );
-	
-	            thetaDelta = 0;
-	            phiDelta = 0;
-	            scale = 1;
-	            pan.set( 0, 0, 0 );
-	
-	            // update condition is:
-	            // min(camera displacement, camera rotation in radians)^2 > EPS
-	            // using small-angle approximation cos(x/2) = 1 - x^2 / 8
-	
-	            if ( lastPosition.distanceToSquared( this.object.position ) > EPS
-	                || 8 * (1 - lastQuaternion.dot(this.object.quaternion)) > EPS ) {
-	
-	                this.dispatchEvent( changeEvent );
-	
-	                lastPosition.copy( this.object.position );
-	                lastQuaternion.copy (this.object.quaternion );
-	
-	            }
-	
-	        };
-	
-	
-	        this.reset = function () {
-	
-	            state = STATE.NONE;
-	
-	            this.target.copy( this.target0 );
-	            this.object.position.copy( this.position0 );
-	
-	            this.update();
-	
-	        };
-	
-	        this.getPolarAngle = function () {
-	
-	            return phi;
-	
-	        };
-	
-	        this.getAzimuthalAngle = function () {
-	
-	            return theta
-	
-	        };
-	
-	        function getAutoRotationAngle() {
-	
-	            return 2 * Math.PI / 60 / 60 * scope.autoRotateSpeed;
-	
-	        }
-	
-	        function getZoomScale() {
-	
-	            return Math.pow( 0.95, scope.zoomSpeed );
-	
-	        }
-	
-	        function onMouseDown( event ) {
-	
-	            if ( scope.enabled === false ) return;
-	            event.preventDefault();
-	
-	            if ( event.button === scope.mouseButtons.ORBIT ) {
-	                if ( scope.noRotate === true ) return;
-	
-	                state = STATE.ROTATE;
-	
-	                rotateStart.set( event.clientX, event.clientY );
-	
-	            } else if ( event.button === scope.mouseButtons.ZOOM ) {
-	                if ( scope.noZoom === true ) return;
-	
-	                state = STATE.DOLLY;
-	
-	                dollyStart.set( event.clientX, event.clientY );
-	
-	            } else if ( event.button === scope.mouseButtons.PAN ) {
-	                if ( scope.noPan === true ) return;
-	
-	                state = STATE.PAN;
-	
-	                panStart.set( event.clientX, event.clientY );
-	
-	            }
-	
-	            if ( state !== STATE.NONE ) {
-	                document.addEventListener( 'mousemove', onMouseMove, false );
-	                document.addEventListener( 'mouseup', onMouseUp, false );
-	                scope.dispatchEvent( startEvent );
-	            }
-	
-	        }
-	
-	        function onMouseMove( event ) {
-	
-	            if ( scope.enabled === false ) return;
-	
-	            event.preventDefault();
-	
-	            var element = scope.domElement === document ? scope.domElement.body : scope.domElement;
-	
-	            if ( state === STATE.ROTATE ) {
-	
-	                if ( scope.noRotate === true ) return;
-	
-	                rotateEnd.set( event.clientX, event.clientY );
-	                rotateDelta.subVectors( rotateEnd, rotateStart );
-	
-	                // rotating across whole screen goes 360 degrees around
-	                scope.rotateLeft( 2 * Math.PI * rotateDelta.x / element.clientWidth * scope.rotateSpeed );
-	
-	                // rotating up and down along whole screen attempts to go 360, but limited to 180
-	                scope.rotateUp( 2 * Math.PI * rotateDelta.y / element.clientHeight * scope.rotateSpeed );
-	
-	                rotateStart.copy( rotateEnd );
-	
-	            } else if ( state === STATE.DOLLY ) {
-	
-	                if ( scope.noZoom === true ) return;
-	
-	                dollyEnd.set( event.clientX, event.clientY );
-	                dollyDelta.subVectors( dollyEnd, dollyStart );
-	
-	                if ( dollyDelta.y > 0 ) {
-	
-	                    scope.dollyIn();
-	
-	                } else {
-	
-	                    scope.dollyOut();
-	
-	                }
-	
-	                dollyStart.copy( dollyEnd );
-	
-	            } else if ( state === STATE.PAN ) {
-	
-	                if ( scope.noPan === true ) return;
-	
-	                panEnd.set( event.clientX, event.clientY );
-	                panDelta.subVectors( panEnd, panStart );
-	
-	                scope.pan( panDelta.x, panDelta.y );
-	
-	                panStart.copy( panEnd );
-	
-	            }
-	
-	            if ( state !== STATE.NONE ) scope.update();
-	
-	        }
-	
-	        function onMouseUp( /* event */ ) {
-	
-	            if ( scope.enabled === false ) return;
-	
-	            document.removeEventListener( 'mousemove', onMouseMove, false );
-	            document.removeEventListener( 'mouseup', onMouseUp, false );
-	            scope.dispatchEvent( endEvent );
-	            state = STATE.NONE;
-	
-	        }
-	
-	        function onMouseWheel( event ) {
-	
-	            if ( scope.enabled === false || scope.noZoom === true || state !== STATE.NONE ) return;
-	
-	            event.preventDefault();
-	            event.stopPropagation();
-	
-	            var delta = 0;
-	
-	            if ( event.wheelDelta !== undefined ) { // WebKit / Opera / Explorer 9
-	
-	                delta = event.wheelDelta;
-	
-	            } else if ( event.detail !== undefined ) { // Firefox
-	
-	                delta = - event.detail;
-	
-	            }
-	
-	            if ( delta > 0 ) {
-	
-	                scope.dollyOut();
-	
-	            } else {
-	
-	                scope.dollyIn();
-	
-	            }
-	
-	            scope.update();
-	            scope.dispatchEvent( startEvent );
-	            scope.dispatchEvent( endEvent );
-	
-	        }
-	
-	        function onKeyDown( event ) {
-	
-	            if ( scope.enabled === false || scope.noKeys === true || scope.noPan === true ) return;
-	
-	            switch ( event.keyCode ) {
-	
-	                case scope.keys.UP:
-	                    scope.pan( 0, scope.keyPanSpeed );
-	                    scope.update();
-	                    break;
-	
-	                case scope.keys.BOTTOM:
-	                    scope.pan( 0, - scope.keyPanSpeed );
-	                    scope.update();
-	                    break;
-	
-	                case scope.keys.LEFT:
-	                    scope.pan( scope.keyPanSpeed, 0 );
-	                    scope.update();
-	                    break;
-	
-	                case scope.keys.RIGHT:
-	                    scope.pan( - scope.keyPanSpeed, 0 );
-	                    scope.update();
-	                    break;
-	
-	            }
-	
-	        }
-	
-	        function touchstart( event ) {
-	
-	            if ( scope.enabled === false ) return;
-	
-	            switch ( event.touches.length ) {
-	
-	                case 1: // one-fingered touch: rotate
-	
-	                    if ( scope.noRotate === true ) return;
-	
-	                    state = STATE.TOUCH_ROTATE;
-	
-	                    rotateStart.set( event.touches[ 0 ].pageX, event.touches[ 0 ].pageY );
-	                    break;
-	
-	                case 2: // two-fingered touch: dolly
-	
-	                    if ( scope.noZoom === true ) return;
-	
-	                    state = STATE.TOUCH_DOLLY;
-	
-	                    var dx = event.touches[ 0 ].pageX - event.touches[ 1 ].pageX;
-	                    var dy = event.touches[ 0 ].pageY - event.touches[ 1 ].pageY;
-	                    var distance = Math.sqrt( dx * dx + dy * dy );
-	                    dollyStart.set( 0, distance );
-	                    break;
-	
-	                case 3: // three-fingered touch: pan
-	
-	                    if ( scope.noPan === true ) return;
-	
-	                    state = STATE.TOUCH_PAN;
-	
-	                    panStart.set( event.touches[ 0 ].pageX, event.touches[ 0 ].pageY );
-	                    break;
-	
-	                default:
-	
-	                    state = STATE.NONE;
-	
-	            }
-	
-	            if ( state !== STATE.NONE ) scope.dispatchEvent( startEvent );
-	
-	        }
-	
-	        function touchmove( event ) {
-	
-	            if ( scope.enabled === false ) return;
-	
-	            event.preventDefault();
-	            event.stopPropagation();
-	
-	            var element = scope.domElement === document ? scope.domElement.body : scope.domElement;
-	
-	            switch ( event.touches.length ) {
-	
-	                case 1: // one-fingered touch: rotate
-	
-	                    if ( scope.noRotate === true ) return;
-	                    if ( state !== STATE.TOUCH_ROTATE ) return;
-	
-	                    rotateEnd.set( event.touches[ 0 ].pageX, event.touches[ 0 ].pageY );
-	                    rotateDelta.subVectors( rotateEnd, rotateStart );
-	
-	                    // rotating across whole screen goes 360 degrees around
-	                    scope.rotateLeft( 2 * Math.PI * rotateDelta.x / element.clientWidth * scope.rotateSpeed );
-	                    // rotating up and down along whole screen attempts to go 360, but limited to 180
-	                    scope.rotateUp( 2 * Math.PI * rotateDelta.y / element.clientHeight * scope.rotateSpeed );
-	
-	                    rotateStart.copy( rotateEnd );
-	
-	                    scope.update();
-	                    break;
-	
-	                case 2: // two-fingered touch: dolly
-	
-	                    if ( scope.noZoom === true ) return;
-	                    if ( state !== STATE.TOUCH_DOLLY ) return;
-	
-	                    var dx = event.touches[ 0 ].pageX - event.touches[ 1 ].pageX;
-	                    var dy = event.touches[ 0 ].pageY - event.touches[ 1 ].pageY;
-	                    var distance = Math.sqrt( dx * dx + dy * dy );
-	
-	                    dollyEnd.set( 0, distance );
-	                    dollyDelta.subVectors( dollyEnd, dollyStart );
-	
-	                    if ( dollyDelta.y > 0 ) {
-	
-	                        scope.dollyOut();
-	
-	                    } else {
-	
-	                        scope.dollyIn();
-	
-	                    }
-	
-	                    dollyStart.copy( dollyEnd );
-	
-	                    scope.update();
-	                    break;
-	
-	                case 3: // three-fingered touch: pan
-	
-	                    if ( scope.noPan === true ) return;
-	                    if ( state !== STATE.TOUCH_PAN ) return;
-	
-	                    panEnd.set( event.touches[ 0 ].pageX, event.touches[ 0 ].pageY );
-	                    panDelta.subVectors( panEnd, panStart );
-	
-	                    scope.pan( panDelta.x, panDelta.y );
-	
-	                    panStart.copy( panEnd );
-	
-	                    scope.update();
-	                    break;
-	
-	                default:
-	
-	                    state = STATE.NONE;
-	
-	            }
-	
-	        }
-	
-	        function touchend( /* event */ ) {
-	
-	            if ( scope.enabled === false ) return;
-	
-	            scope.dispatchEvent( endEvent );
-	            state = STATE.NONE;
-	
-	        }
-	
-	        this.domElement.addEventListener( 'contextmenu', function ( event ) { event.preventDefault(); }, false );
-	        this.domElement.addEventListener( 'mousedown', onMouseDown, false );
-	        this.domElement.addEventListener( 'mousewheel', onMouseWheel, false );
-	        this.domElement.addEventListener( 'DOMMouseScroll', onMouseWheel, false ); // firefox
-	
-	        this.domElement.addEventListener( 'touchstart', touchstart, false );
-	        this.domElement.addEventListener( 'touchend', touchend, false );
-	        this.domElement.addEventListener( 'touchmove', touchmove, false );
-	
-	        window.addEventListener( 'keydown', onKeyDown, false );
-	
-	        // force an update at start
-	        this.update();
-	    };
-	
-	    OrbitControls.prototype = Object.create( THREE.EventDispatcher.prototype );
-	    OrbitControls.prototype.constructor = OrbitControls;
-	    return OrbitControls;
-	}
-
-/***/ },
-/* 6 */
 /*!***********************************!*\
   !*** ./~/detector-webgl/index.js ***!
   \***********************************/
@@ -45324,444 +44634,7 @@
 
 
 /***/ },
-/* 7 */
-/*!*****************************************!*\
-  !*** ./~/three-effectcomposer/index.js ***!
-  \*****************************************/
-/***/ function(module, exports, __webpack_require__) {
-
-	/**
-	 * @author alteredq / http://alteredqualia.com/
-	 */
-	
-	module.exports = function(THREE) {
-	  var CopyShader = EffectComposer.CopyShader = __webpack_require__(/*! three-copyshader */ 8)
-	    , RenderPass = EffectComposer.RenderPass = __webpack_require__(/*! ./lib/renderpass */ 9)(THREE)
-	    , ShaderPass = EffectComposer.ShaderPass = __webpack_require__(/*! ./lib/shaderpass */ 10)(THREE, EffectComposer)
-	    , MaskPass = EffectComposer.MaskPass = __webpack_require__(/*! ./lib/maskpass */ 11)(THREE)
-	    , ClearMaskPass = EffectComposer.ClearMaskPass = __webpack_require__(/*! ./lib/clearmaskpass */ 12)(THREE)
-	
-	  function EffectComposer( renderer, renderTarget ) {
-	    this.renderer = renderer;
-	
-	    if ( renderTarget === undefined ) {
-	      var width = window.innerWidth || 1;
-	      var height = window.innerHeight || 1;
-	      var parameters = { minFilter: THREE.LinearFilter, magFilter: THREE.LinearFilter, format: THREE.RGBFormat, stencilBuffer: false };
-	
-	      renderTarget = new THREE.WebGLRenderTarget( width, height, parameters );
-	    }
-	
-	    this.renderTarget1 = renderTarget;
-	    this.renderTarget2 = renderTarget.clone();
-	
-	    this.writeBuffer = this.renderTarget1;
-	    this.readBuffer = this.renderTarget2;
-	
-	    this.passes = [];
-	
-	    this.copyPass = new ShaderPass( CopyShader );
-	  };
-	
-	  EffectComposer.prototype = {
-	    swapBuffers: function() {
-	
-	      var tmp = this.readBuffer;
-	      this.readBuffer = this.writeBuffer;
-	      this.writeBuffer = tmp;
-	
-	    },
-	
-	    addPass: function ( pass ) {
-	
-	      this.passes.push( pass );
-	
-	    },
-	
-	    insertPass: function ( pass, index ) {
-	
-	      this.passes.splice( index, 0, pass );
-	
-	    },
-	
-	    render: function ( delta ) {
-	
-	      this.writeBuffer = this.renderTarget1;
-	      this.readBuffer = this.renderTarget2;
-	
-	      var maskActive = false;
-	
-	      var pass, i, il = this.passes.length;
-	
-	      for ( i = 0; i < il; i ++ ) {
-	
-	        pass = this.passes[ i ];
-	
-	        if ( !pass.enabled ) continue;
-	
-	        pass.render( this.renderer, this.writeBuffer, this.readBuffer, delta, maskActive );
-	
-	        if ( pass.needsSwap ) {
-	
-	          if ( maskActive ) {
-	
-	            var context = this.renderer.context;
-	
-	            context.stencilFunc( context.NOTEQUAL, 1, 0xffffffff );
-	
-	            this.copyPass.render( this.renderer, this.writeBuffer, this.readBuffer, delta );
-	
-	            context.stencilFunc( context.EQUAL, 1, 0xffffffff );
-	
-	          }
-	
-	          this.swapBuffers();
-	
-	        }
-	
-	        if ( pass instanceof MaskPass ) {
-	
-	          maskActive = true;
-	
-	        } else if ( pass instanceof ClearMaskPass ) {
-	
-	          maskActive = false;
-	
-	        }
-	
-	      }
-	
-	    },
-	
-	    reset: function ( renderTarget ) {
-	
-	      if ( renderTarget === undefined ) {
-	
-	        renderTarget = this.renderTarget1.clone();
-	
-	        renderTarget.width = window.innerWidth;
-	        renderTarget.height = window.innerHeight;
-	
-	      }
-	
-	      this.renderTarget1 = renderTarget;
-	      this.renderTarget2 = renderTarget.clone();
-	
-	      this.writeBuffer = this.renderTarget1;
-	      this.readBuffer = this.renderTarget2;
-	
-	    },
-	
-	    setSize: function ( width, height ) {
-	
-	      var renderTarget = this.renderTarget1.clone();
-	
-	      renderTarget.width = width;
-	      renderTarget.height = height;
-	
-	      this.reset( renderTarget );
-	
-	    }
-	
-	  };
-	
-	  // shared ortho camera
-	
-	  EffectComposer.camera = new THREE.OrthographicCamera( -1, 1, 1, -1, 0, 1 );
-	
-	  EffectComposer.quad = new THREE.Mesh( new THREE.PlaneGeometry( 2, 2 ), null );
-	
-	  EffectComposer.scene = new THREE.Scene();
-	  EffectComposer.scene.add( EffectComposer.quad );
-	
-	  return EffectComposer
-	};
-
-/***/ },
-/* 8 */
-/*!************************************************************!*\
-  !*** ./~/three-effectcomposer/~/three-copyshader/index.js ***!
-  \************************************************************/
-/***/ function(module, exports, __webpack_require__) {
-
-	/**
-	 * @author alteredq / http://alteredqualia.com/
-	 *
-	 * Full-screen textured quad shader
-	 */
-	
-	module.exports = {
-	  uniforms: {
-	    "tDiffuse": { type: "t", value: null },
-	    "opacity":  { type: "f", value: 1.0 }
-	  },
-	  vertexShader: [
-	    "varying vec2 vUv;",
-	
-	    "void main() {",
-	
-	      "vUv = uv;",
-	      "gl_Position = projectionMatrix * modelViewMatrix * vec4( position, 1.0 );",
-	
-	    "}"
-	  ].join("\n"),
-	  fragmentShader: [
-	    "uniform float opacity;",
-	
-	    "uniform sampler2D tDiffuse;",
-	
-	    "varying vec2 vUv;",
-	
-	    "void main() {",
-	
-	      "vec4 texel = texture2D( tDiffuse, vUv );",
-	      "gl_FragColor = opacity * texel;",
-	
-	    "}"
-	  ].join("\n")
-	};
-
-
-/***/ },
-/* 9 */
-/*!**************************************************!*\
-  !*** ./~/three-effectcomposer/lib/renderpass.js ***!
-  \**************************************************/
-/***/ function(module, exports, __webpack_require__) {
-
-	/**
-	 * @author alteredq / http://alteredqualia.com/
-	 */
-	
-	module.exports = function(THREE) {
-	  function RenderPass( scene, camera, overrideMaterial, clearColor, clearAlpha ) {
-	    if (!(this instanceof RenderPass)) return new RenderPass(scene, camera, overrideMaterial, clearColor, clearAlpha);
-	
-	    this.scene = scene;
-	    this.camera = camera;
-	
-	    this.overrideMaterial = overrideMaterial;
-	
-	    this.clearColor = clearColor;
-	    this.clearAlpha = ( clearAlpha !== undefined ) ? clearAlpha : 1;
-	
-	    this.oldClearColor = new THREE.Color();
-	    this.oldClearAlpha = 1;
-	
-	    this.enabled = true;
-	    this.clear = true;
-	    this.needsSwap = false;
-	
-	  };
-	
-	  RenderPass.prototype = {
-	
-	    render: function ( renderer, writeBuffer, readBuffer, delta ) {
-	
-	      this.scene.overrideMaterial = this.overrideMaterial;
-	
-	      if ( this.clearColor ) {
-	
-	        this.oldClearColor.copy( renderer.getClearColor() );
-	        this.oldClearAlpha = renderer.getClearAlpha();
-	
-	        renderer.setClearColor( this.clearColor, this.clearAlpha );
-	
-	      }
-	
-	      renderer.render( this.scene, this.camera, readBuffer, this.clear );
-	
-	      if ( this.clearColor ) {
-	
-	        renderer.setClearColor( this.oldClearColor, this.oldClearAlpha );
-	
-	      }
-	
-	      this.scene.overrideMaterial = null;
-	
-	    }
-	
-	  };
-	
-	  return RenderPass;
-	
-	};
-
-
-/***/ },
-/* 10 */
-/*!**************************************************!*\
-  !*** ./~/three-effectcomposer/lib/shaderpass.js ***!
-  \**************************************************/
-/***/ function(module, exports, __webpack_require__) {
-
-	/**
-	 * @author alteredq / http://alteredqualia.com/
-	 */
-	
-	module.exports = function(THREE, EffectComposer) {
-	  function ShaderPass( shader, textureID ) {
-	    if (!(this instanceof ShaderPass)) return new ShaderPass(shader, textureID);
-	
-	    this.textureID = ( textureID !== undefined ) ? textureID : "tDiffuse";
-	
-	    this.uniforms = THREE.UniformsUtils.clone( shader.uniforms );
-	
-	    this.material = new THREE.ShaderMaterial( {
-	
-	      uniforms: this.uniforms,
-	      vertexShader: shader.vertexShader,
-	      fragmentShader: shader.fragmentShader
-	
-	    } );
-	
-	    this.renderToScreen = false;
-	
-	    this.enabled = true;
-	    this.needsSwap = true;
-	    this.clear = false;
-	
-	  };
-	
-	  ShaderPass.prototype = {
-	
-	    render: function ( renderer, writeBuffer, readBuffer, delta ) {
-	
-	      if ( this.uniforms[ this.textureID ] ) {
-	
-	        this.uniforms[ this.textureID ].value = readBuffer;
-	
-	      }
-	
-	      EffectComposer.quad.material = this.material;
-	
-	      if ( this.renderToScreen ) {
-	
-	        renderer.render( EffectComposer.scene, EffectComposer.camera );
-	
-	      } else {
-	
-	        renderer.render( EffectComposer.scene, EffectComposer.camera, writeBuffer, this.clear );
-	
-	      }
-	
-	    }
-	
-	  };
-	
-	  return ShaderPass;
-	
-	};
-
-/***/ },
-/* 11 */
-/*!************************************************!*\
-  !*** ./~/three-effectcomposer/lib/maskpass.js ***!
-  \************************************************/
-/***/ function(module, exports, __webpack_require__) {
-
-	/**
-	 * @author alteredq / http://alteredqualia.com/
-	 */
-	
-	module.exports = function(THREE) {
-	  function MaskPass( scene, camera ) {
-	    if (!(this instanceof MaskPass)) return new MaskPass(scene, camera);
-	
-	    this.scene = scene;
-	    this.camera = camera;
-	
-	    this.enabled = true;
-	    this.clear = true;
-	    this.needsSwap = false;
-	
-	    this.inverse = false;
-	  };
-	
-	  MaskPass.prototype = {
-	
-	    render: function ( renderer, writeBuffer, readBuffer, delta ) {
-	
-	      var context = renderer.context;
-	
-	      // don't update color or depth
-	
-	      context.colorMask( false, false, false, false );
-	      context.depthMask( false );
-	
-	      // set up stencil
-	
-	      var writeValue, clearValue;
-	
-	      if ( this.inverse ) {
-	
-	        writeValue = 0;
-	        clearValue = 1;
-	
-	      } else {
-	
-	        writeValue = 1;
-	        clearValue = 0;
-	
-	      }
-	
-	      context.enable( context.STENCIL_TEST );
-	      context.stencilOp( context.REPLACE, context.REPLACE, context.REPLACE );
-	      context.stencilFunc( context.ALWAYS, writeValue, 0xffffffff );
-	      context.clearStencil( clearValue );
-	
-	      // draw into the stencil buffer
-	
-	      renderer.render( this.scene, this.camera, readBuffer, this.clear );
-	      renderer.render( this.scene, this.camera, writeBuffer, this.clear );
-	
-	      // re-enable update of color and depth
-	
-	      context.colorMask( true, true, true, true );
-	      context.depthMask( true );
-	
-	      // only render where stencil is set to 1
-	
-	      context.stencilFunc( context.EQUAL, 1, 0xffffffff );  // draw if == 1
-	      context.stencilOp( context.KEEP, context.KEEP, context.KEEP );
-	
-	    }
-	
-	  };
-	
-	  return MaskPass
-	};
-
-
-/***/ },
-/* 12 */
-/*!*****************************************************!*\
-  !*** ./~/three-effectcomposer/lib/clearmaskpass.js ***!
-  \*****************************************************/
-/***/ function(module, exports, __webpack_require__) {
-
-	/**
-	 * @author alteredq / http://alteredqualia.com/
-	 */
-	
-	module.exports = function(THREE) {
-	  function ClearMaskPass() {
-	    if (!(this instanceof ClearMaskPass)) return new ClearMaskPass(scene, camera);
-	    this.enabled = true;
-	  };
-	
-	  ClearMaskPass.prototype = {
-	    render: function ( renderer, writeBuffer, readBuffer, delta ) {
-	      var context = renderer.context;
-	      context.disable( context.STENCIL_TEST );
-	    }
-	  };
-	
-	  return ClearMaskPass
-	};
-
-/***/ },
-/* 13 */
+/* 6 */
 /*!*****************************************!*\
   !*** ./web_modules/components/Score.js ***!
   \*****************************************/
@@ -45779,11 +44652,11 @@
 	
 	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
 	
-	var _d3 = __webpack_require__(/*! d3 */ 14);
+	var _d3 = __webpack_require__(/*! d3 */ 7);
 	
 	var _d32 = _interopRequireDefault(_d3);
 	
-	var _PartJs = __webpack_require__(/*! ./Part.js */ 15);
+	var _PartJs = __webpack_require__(/*! ./Part.js */ 8);
 	
 	var _PartJs2 = _interopRequireDefault(_PartJs);
 	
@@ -45849,7 +44722,7 @@
 	module.exports = exports['default'];
 
 /***/ },
-/* 14 */
+/* 7 */
 /*!********************!*\
   !*** ./~/d3/d3.js ***!
   \********************/
@@ -55361,7 +54234,7 @@
 	}();
 
 /***/ },
-/* 15 */
+/* 8 */
 /*!****************************************!*\
   !*** ./web_modules/components/Part.js ***!
   \****************************************/
