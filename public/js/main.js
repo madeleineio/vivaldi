@@ -9409,6 +9409,10 @@
 	
 	var _detectorWebgl2 = _interopRequireDefault(_detectorWebgl);
 	
+	var _jquery = __webpack_require__(/*! jquery */ 1);
+	
+	var _jquery2 = _interopRequireDefault(_jquery);
+	
 	// we do not instantiate the promise initially, we let the main module call the exported function first after the dom ready
 	// to be sure to have the good width and height
 	var p = undefined;
@@ -9418,8 +9422,8 @@
 	        p = new Promise(function (resolve) {
 	            // create a scene
 	            var scene = new _three2['default'].Scene();
-	            var outerWidth = window.outerWidth;
-	            var outerHeight = window.outerHeight;
+	            var outerWidth = (0, _jquery2['default'])(window).width();
+	            var outerHeight = (0, _jquery2['default'])(window).height();
 	            var viewAngle = 40;
 	            var aspect = outerWidth / outerHeight;
 	            var near = 0.1;

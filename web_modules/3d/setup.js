@@ -1,6 +1,7 @@
 'use strict'
 import THREE from 'three'
 import isWebglEnabled from 'detector-webgl'
+import $ from 'jquery'
 
 // we do not instantiate the promise initially, we let the main module call the exported function first after the dom ready
 // to be sure to have the good width and height
@@ -10,7 +11,8 @@ export default () => {
         p = new Promise( (resolve) => {
             // create a scene
             let scene = new THREE.Scene()
-            let { outerWidth, outerHeight } = window
+            let outerWidth = $(window).width()
+            let outerHeight = $(window).height()
             let [viewAngle, aspect, near, far] = [40, outerWidth / outerHeight, .1, 40000]
 
             // create a camera
