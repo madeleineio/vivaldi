@@ -35,14 +35,16 @@ function launchCamera(){
     totalStep = timeline[ timelinePostion+1 ].steps
     currentStep = 0
 
+    // for the position, we will build a quadratic bezier curve
     cameraPositionSteps = new THREE.QuadraticBezierCurve3(
         new THREE.Vector3(...timeline[timelinePostion+0].position),
         new THREE.Vector3(...timeline[timelinePostion+1].position),
         new THREE.Vector3(...timeline[timelinePostion+2].position)
     ).getPoints(totalStep)
-    cameraLookAtSteps = new THREE.QuadraticBezierCurve3(
+
+    // for the look at, we use a simple segment
+    cameraLookAtSteps = new THREE.LineCurve3(
         new THREE.Vector3(...timeline[timelinePostion+0].lookAt),
-        new THREE.Vector3(...timeline[timelinePostion+1].lookAt),
         new THREE.Vector3(...timeline[timelinePostion+2].lookAt)
     ).getPoints(totalStep)
 

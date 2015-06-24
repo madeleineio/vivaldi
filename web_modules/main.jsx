@@ -1,7 +1,7 @@
 import $ from 'jquery'
 import getData from './services/getData.js'
 import setup from './3d/setup.js'
-import animate from './3d/animate.js'
+import animate from './3d/animate2.js'
 import Score from './components/Score.js'
 
 
