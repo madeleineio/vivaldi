@@ -16,7 +16,7 @@ let
     // list of all computed steps for the camera lookingAt
     cameraLookAtSteps = []
 
-const animationTotalSteps = 60
+const animationTotalSteps = 90
 
 $(()=> {
 
@@ -46,9 +46,10 @@ function launchCamera(){
 
     // we're trying to find the control point for the position's quadratic curve formed by p1Position and p2Position
     // it will be on the extension of the line formed by the centerLookAt point and the centerLookAt
-    // the control point will be at sqrt(dist(p1Position, p2Position)/2)
+    // we arbitrary choose that dist(centerLookAt, centerPosition) = 2* dist(centerPosition, controlPosition)
+    // the at() function is using a normalized value so we have at(1.5) to reach the controlPosition point
     let lineNormal = new THREE.Line3(centerLookAt, centerPosition)
-    let controlPosition = lineNormal.at( 2/*Math.sqrt( linePosition.distance()/2 )*/ )
+    let controlPosition = lineNormal.at( 1.5 )
 
     // for the camera's position, we use a quadratic curve
     cameraPositionSteps = new THREE.QuadraticBezierCurve3(
