@@ -63,7 +63,7 @@
 	
 	var _dSetupJs2 = _interopRequireDefault(_dSetupJs);
 	
-	var _dAnimateJs = __webpack_require__(/*! ./3d/animate.js */ 6);
+	var _dAnimateJs = __webpack_require__(/*! ./3d/animate.js */ 7);
 	
 	var _dAnimateJs2 = _interopRequireDefault(_dAnimateJs);
 	
@@ -9398,8 +9398,11 @@
 	Object.defineProperty(exports, '__esModule', {
 	    value: true
 	});
+	var _bind = Function.prototype.bind;
 	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
+	
+	function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr2 = Array(arr.length); i < arr.length; i++) arr2[i] = arr[i]; return arr2; } else { return Array.from(arr); } }
 	
 	var _three = __webpack_require__(/*! three */ 4);
 	
@@ -9413,6 +9416,10 @@
 	
 	var _jquery2 = _interopRequireDefault(_jquery);
 	
+	var _timelineTimelineJs = __webpack_require__(/*! ../timeline/timeline.js */ 6);
+	
+	var _timelineTimelineJs2 = _interopRequireDefault(_timelineTimelineJs);
+	
 	// we do not instantiate the promise initially, we let the main module call the exported function first after the dom ready
 	// to be sure to have the good width and height
 	var p = undefined;
@@ -9420,6 +9427,8 @@
 	exports['default'] = function () {
 	    if (!p) {
 	        p = new Promise(function (resolve) {
+	            var _camera$position;
+	
 	            // create a scene
 	            var scene = new _three2['default'].Scene();
 	            var outerWidth = (0, _jquery2['default'])(window).width();
@@ -9446,8 +9455,8 @@
 	            renderer.setSize(outerWidth, outerHeight);
 	
 	            scene.add(camera);
-	            camera.position.set(0, 0, -10000);
-	            camera.lookAt(scene.position);
+	            (_camera$position = camera.position).set.apply(_camera$position, _toConsumableArray(_timelineTimelineJs2['default'][0].position));
+	            camera.lookAt(new (_bind.apply(_three2['default'].Vector3, [null].concat(_toConsumableArray(_timelineTimelineJs2['default'][0].lookAt))))());
 	
 	            var container = document.querySelector('#three-container');
 	            container.appendChild(renderer.domElement);
@@ -44644,6 +44653,65 @@
 
 /***/ },
 /* 6 */
+/*!******************************************!*\
+  !*** ./web_modules/timeline/timeline.js ***!
+  \******************************************/
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	Object.defineProperty(exports, '__esModule', {
+	    value: true
+	});
+	exports['default'] = [{
+	    text: '',
+	    position: [2000, 2000, 1000],
+	    lookAt: [0, 2000, 0]
+	}, {
+	    position: [3000, 3000, 0],
+	    steps: 100,
+	    lookAt: [0, 2000, 0]
+	}, {
+	    text: '',
+	    position: [3000, 3000, 1000],
+	    lookAt: [0, 3000, 0]
+	}, {
+	    position: [2000, 4000, 2500],
+	    steps: 100,
+	    lookAt: [0, 4000, 0]
+	}, {
+	    text: '',
+	    position: [-5000, 5000, 5000],
+	    lookAt: [0, 5000, 0]
+	}, {
+	    position: [0, 5000, 4000],
+	    steps: 60,
+	    lookAt: [0, 5000, 0]
+	}, {
+	    text: '',
+	    position: [8000, 5000, 4000],
+	    lookAt: [0, 5000, 0]
+	}, {
+	    position: [0, 7500, 4000],
+	    steps: 60,
+	    lookAt: [0, 5000, 0]
+	}, {
+	    text: '',
+	    position: [8000, 10000, 4000],
+	    lookAt: [0, 11000, 0]
+	}, {
+	    position: [0, 8000, 4000],
+	    steps: 60,
+	    lookAt: [0, 8000, 0]
+	}, {
+	    text: '',
+	    position: [4000, 10000, 4000],
+	    lookAt: [0, 11000, 0]
+	}];
+	module.exports = exports['default'];
+
+/***/ },
+/* 7 */
 /*!***********************************!*\
   !*** ./web_modules/3d/animate.js ***!
   \***********************************/
@@ -44669,7 +44737,7 @@
 	
 	var _three2 = _interopRequireDefault(_three);
 	
-	var _timelineTimelineJs = __webpack_require__(/*! ../timeline/timeline.js */ 7);
+	var _timelineTimelineJs = __webpack_require__(/*! ../timeline/timeline.js */ 6);
 	
 	var _timelineTimelineJs2 = _interopRequireDefault(_timelineTimelineJs);
 	
@@ -44754,73 +44822,6 @@
 	    });
 	}
 	
-	module.exports = exports['default'];
-
-/***/ },
-/* 7 */
-/*!******************************************!*\
-  !*** ./web_modules/timeline/timeline.js ***!
-  \******************************************/
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-	
-	Object.defineProperty(exports, '__esModule', {
-	    value: true
-	});
-	exports['default'] = [{
-	    text: 'Visualisation du concerto pour flute RV 439 de Vivaldi - scrollez pour continuer',
-	    position: [0, 0, -10000],
-	    lookAt: [0, 0, 0]
-	}, {
-	    position: [3000, 1000, 0],
-	    steps: 100,
-	    lookAt: [0, 1000, 0]
-	}, {
-	    text: '',
-	    position: [2000, 2000, 1000],
-	    lookAt: [0, 2000, 0]
-	}, {
-	    position: [3000, 3000, 0],
-	    steps: 100,
-	    lookAt: [0, 2000, 0]
-	}, {
-	    text: '',
-	    position: [3000, 3000, 1000],
-	    lookAt: [0, 3000, 0]
-	}, {
-	    position: [2000, 4000, 2500],
-	    steps: 100,
-	    lookAt: [0, 4000, 0]
-	}, {
-	    text: '',
-	    position: [-5000, 5000, 5000],
-	    lookAt: [0, 5000, 0]
-	}, {
-	    position: [0, 5000, 4000],
-	    steps: 60,
-	    lookAt: [0, 5000, 0]
-	}, {
-	    text: '',
-	    position: [8000, 5000, 4000],
-	    lookAt: [0, 5000, 0]
-	}, {
-	    position: [0, 7500, 4000],
-	    steps: 60,
-	    lookAt: [0, 5000, 0]
-	}, {
-	    text: '',
-	    position: [8000, 10000, 4000],
-	    lookAt: [0, 11000, 0]
-	}, {
-	    position: [0, 8000, 4000],
-	    steps: 60,
-	    lookAt: [0, 8000, 0]
-	}, {
-	    text: '',
-	    position: [8000, 10000, 4000],
-	    lookAt: [0, 11000, 0]
-	}];
 	module.exports = exports['default'];
 
 /***/ },

@@ -3,6 +3,8 @@ import THREE from 'three'
 import isWebglEnabled from 'detector-webgl'
 import $ from 'jquery'
 
+import timeline from '../timeline/timeline.js'
+
 // we do not instantiate the promise initially, we let the main module call the exported function first after the dom ready
 // to be sure to have the good width and height
 let p
@@ -32,8 +34,8 @@ export default () => {
             renderer.setSize( outerWidth, outerHeight )
 
             scene.add(camera)
-            camera.position.set(0, 0, -10000)
-            camera.lookAt(scene.position)
+            camera.position.set( ...timeline[0].position )
+            camera.lookAt( new THREE.Vector3(...timeline[0].lookAt) )
 
             let container = document.querySelector('#three-container')
             container.appendChild(renderer.domElement)
