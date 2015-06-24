@@ -9432,8 +9432,8 @@
 	            var renderer = undefined;
 	            if (_detectorWebgl2['default']) {
 	                renderer = new _three2['default'].WebGLRenderer({
-	                    antialias: true
-	                    //precision: 'highp'
+	                    antialias: true,
+	                    precision: 'highp'
 	                });
 	                renderer.setClearColor(16777215, 1);
 	            } else {
@@ -44709,10 +44709,11 @@
 	    cameraLookAtSteps = new _three2['default'].QuadraticBezierCurve3(new (_bind.apply(_three2['default'].Vector3, [null].concat(_toConsumableArray(_timelineTimelineJs2['default'][timelinePostion + 0].lookAt))))(), new (_bind.apply(_three2['default'].Vector3, [null].concat(_toConsumableArray(_timelineTimelineJs2['default'][timelinePostion + 1].lookAt))))(), new (_bind.apply(_three2['default'].Vector3, [null].concat(_toConsumableArray(_timelineTimelineJs2['default'][timelinePostion + 2].lookAt))))()).getPoints(totalStep);
 	
 	    isCameraMoving = true;
+	
+	    animate();
 	}
 	
 	function stopCamera() {
-	    console.log('stop camera');
 	    // increment timeline position
 	    timelinePostion += 2;
 	    // set flag to false
@@ -44738,10 +44739,9 @@
 	            } else {
 	                stopCamera();
 	            }
+	            window.requestAnimationFrame(animate);
 	        }
-	
 	        renderer.render(scene, camera);
-	        window.requestAnimationFrame(animate);
 	    });
 	}
 	

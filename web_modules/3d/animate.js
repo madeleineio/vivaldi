@@ -42,10 +42,11 @@ function launchCamera(){
     ).getPoints(totalStep)
 
     isCameraMoving = true
+
+    animate()
 }
 
 function stopCamera(){
-    console.log('stop camera')
     // increment timeline position
     timelinePostion+=2
     // set flag to false
@@ -68,9 +69,9 @@ export default function animate() {
             }else {
                 stopCamera()
             }
+            window.requestAnimationFrame(animate)
         }
-
         renderer.render(scene, camera)
-        window.requestAnimationFrame(animate)
+
     })
 }
