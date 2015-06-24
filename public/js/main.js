@@ -63,11 +63,11 @@
 	
 	var _dSetupJs2 = _interopRequireDefault(_dSetupJs);
 	
-	var _dAnimateJs = __webpack_require__(/*! ./3d/animate.js */ 13);
+	var _dAnimateJs = __webpack_require__(/*! ./3d/animate.js */ 6);
 	
 	var _dAnimateJs2 = _interopRequireDefault(_dAnimateJs);
 	
-	var _componentsScoreJs = __webpack_require__(/*! ./components/Score.js */ 6);
+	var _componentsScoreJs = __webpack_require__(/*! ./components/Score.js */ 8);
 	
 	var _componentsScoreJs2 = _interopRequireDefault(_componentsScoreJs);
 	
@@ -44640,6 +44640,142 @@
 
 /***/ },
 /* 6 */
+/*!***********************************!*\
+  !*** ./web_modules/3d/animate.js ***!
+  \***********************************/
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	Object.defineProperty(exports, '__esModule', {
+	    value: true
+	});
+	var _bind = Function.prototype.bind;
+	exports['default'] = animate;
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
+	
+	function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr2 = Array(arr.length); i < arr.length; i++) arr2[i] = arr[i]; return arr2; } else { return Array.from(arr); } }
+	
+	var _jquery = __webpack_require__(/*! jquery */ 1);
+	
+	var _jquery2 = _interopRequireDefault(_jquery);
+	
+	var _three = __webpack_require__(/*! three */ 4);
+	
+	var _three2 = _interopRequireDefault(_three);
+	
+	var _timelineTimelineJs = __webpack_require__(/*! ../timeline/timeline.js */ 7);
+	
+	var _timelineTimelineJs2 = _interopRequireDefault(_timelineTimelineJs);
+	
+	var _setupJs = __webpack_require__(/*! ./setup.js */ 3);
+	
+	var _setupJs2 = _interopRequireDefault(_setupJs);
+	
+	var
+	// flag to launch camera move
+	isCameraMoving = false,
+	
+	// timeline position : correspond to the begin
+	// ie : timelinePosition = 0 means that timeline[0], timeline[1] and timeline[2] are forming the Qaudratic bezier curve
+	timelinePostion = 0,
+	
+	// total steps for the current move
+	totalStep = 0,
+	
+	// current step in the move's interpolation
+	currentStep = 0,
+	
+	// list of all computed steps for the camera position
+	cameraPositionSteps = [],
+	
+	// list of all computed steps for the camera lookingAt
+	cameraLookAtSteps = [];
+	
+	(0, _jquery2['default'])(function () {
+	    // TODO : http://www.smashingmagazine.com/2014/08/25/how-i-built-the-one-page-scroll-plugin/
+	    (0, _jquery2['default'])(document).on('click', launchCamera);
+	});
+	
+	// launch a new camera move
+	// comute all steps of the interpolation
+	function launchCamera() {
+	
+	    totalStep = _timelineTimelineJs2['default'][timelinePostion + 1].steps;
+	    currentStep = 0;
+	
+	    cameraPositionSteps = new _three2['default'].QuadraticBezierCurve3(new (_bind.apply(_three2['default'].Vector3, [null].concat(_toConsumableArray(_timelineTimelineJs2['default'][0].position))))(), new (_bind.apply(_three2['default'].Vector3, [null].concat(_toConsumableArray(_timelineTimelineJs2['default'][1].position))))(), new (_bind.apply(_three2['default'].Vector3, [null].concat(_toConsumableArray(_timelineTimelineJs2['default'][2].position))))()).getPoints(totalStep);
+	    cameraLookAtSteps = new _three2['default'].QuadraticBezierCurve3(new (_bind.apply(_three2['default'].Vector3, [null].concat(_toConsumableArray(_timelineTimelineJs2['default'][0].lookAt))))(), new (_bind.apply(_three2['default'].Vector3, [null].concat(_toConsumableArray(_timelineTimelineJs2['default'][1].lookAt))))(), new (_bind.apply(_three2['default'].Vector3, [null].concat(_toConsumableArray(_timelineTimelineJs2['default'][2].lookAt))))()).getPoints(totalStep);
+	
+	    isCameraMoving = true;
+	}
+	
+	function stopCamera() {
+	    // increment timeline position
+	    timelinePostion += 2;
+	    // set flag to false
+	    isCameraMoving = false;
+	}
+	
+	function moveCamera(camera) {
+	    camera.lookAt(cameraLookAtSteps[currentStep]);
+	    var cameraPosition = cameraPositionSteps[currentStep];
+	    camera.position.set(cameraPosition.x, cameraPosition.y, cameraPosition.z);
+	    currentStep++;
+	}
+	
+	function animate() {
+	    (0, _setupJs2['default'])().then(function (_ref) {
+	        var scene = _ref.scene;
+	        var camera = _ref.camera;
+	        var renderer = _ref.renderer;
+	
+	        if (isCameraMoving) {
+	            if (currentStep < totalStep) {
+	                moveCamera(camera);
+	            } else {
+	                stopCamera();
+	            }
+	        }
+	
+	        renderer.render(scene, camera);
+	        window.requestAnimationFrame(animate);
+	    });
+	}
+	
+	module.exports = exports['default'];
+
+/***/ },
+/* 7 */
+/*!******************************************!*\
+  !*** ./web_modules/timeline/timeline.js ***!
+  \******************************************/
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	Object.defineProperty(exports, '__esModule', {
+	    value: true
+	});
+	exports['default'] = [{
+	    text: 'Visualisation du concerto pour flute RV 439 de Vivaldi - scrollez pour continuer',
+	    position: [0, 0, -2000],
+	    lookAt: [0, 0, 0]
+	}, {
+	    text: '',
+	    position: [3000, 1000, 0],
+	    steps: 50,
+	    lookAt: [0, 1000, 0]
+	}, {
+	    text: '',
+	    position: [2000, 2000, 1000],
+	    lookAt: [0, 2000, 0]
+	}];
+	module.exports = exports['default'];
+
+/***/ },
+/* 8 */
 /*!*****************************************!*\
   !*** ./web_modules/components/Score.js ***!
   \*****************************************/
@@ -44657,11 +44793,11 @@
 	
 	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
 	
-	var _d3 = __webpack_require__(/*! d3 */ 7);
+	var _d3 = __webpack_require__(/*! d3 */ 9);
 	
 	var _d32 = _interopRequireDefault(_d3);
 	
-	var _PartJs = __webpack_require__(/*! ./Part.js */ 8);
+	var _PartJs = __webpack_require__(/*! ./Part.js */ 10);
 	
 	var _PartJs2 = _interopRequireDefault(_PartJs);
 	
@@ -44726,7 +44862,7 @@
 	module.exports = exports['default'];
 
 /***/ },
-/* 7 */
+/* 9 */
 /*!********************!*\
   !*** ./~/d3/d3.js ***!
   \********************/
@@ -54238,7 +54374,7 @@
 	}();
 
 /***/ },
-/* 8 */
+/* 10 */
 /*!****************************************!*\
   !*** ./web_modules/components/Part.js ***!
   \****************************************/
@@ -54256,11 +54392,11 @@
 	
 	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
 	
-	var _d3 = __webpack_require__(/*! d3 */ 7);
+	var _d3 = __webpack_require__(/*! d3 */ 9);
 	
 	var _d32 = _interopRequireDefault(_d3);
 	
-	var _MeasureJs = __webpack_require__(/*! ./Measure.js */ 9);
+	var _MeasureJs = __webpack_require__(/*! ./Measure.js */ 11);
 	
 	var _MeasureJs2 = _interopRequireDefault(_MeasureJs);
 	
@@ -54315,7 +54451,7 @@
 	module.exports = exports['default'];
 
 /***/ },
-/* 9 */
+/* 11 */
 /*!*******************************************!*\
   !*** ./web_modules/components/Measure.js ***!
   \*******************************************/
@@ -54333,7 +54469,7 @@
 	
 	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
 	
-	var _d3 = __webpack_require__(/*! d3 */ 7);
+	var _d3 = __webpack_require__(/*! d3 */ 9);
 	
 	var _d32 = _interopRequireDefault(_d3);
 	
@@ -54341,15 +54477,15 @@
 	
 	var _three2 = _interopRequireDefault(_three);
 	
-	var _servicesGetIntByPitchJs = __webpack_require__(/*! ../services/getIntByPitch.js */ 11);
+	var _servicesGetIntByPitchJs = __webpack_require__(/*! ../services/getIntByPitch.js */ 13);
 	
 	var _servicesGetIntByPitchJs2 = _interopRequireDefault(_servicesGetIntByPitchJs);
 	
-	var _shadersVertexGlsl = __webpack_require__(/*! ../shaders/vertex.glsl */ 10);
+	var _shadersVertexGlsl = __webpack_require__(/*! ../shaders/vertex.glsl */ 12);
 	
 	var _shadersVertexGlsl2 = _interopRequireDefault(_shadersVertexGlsl);
 	
-	var _shadersFragmentGlsl = __webpack_require__(/*! ../shaders/fragment.glsl */ 12);
+	var _shadersFragmentGlsl = __webpack_require__(/*! ../shaders/fragment.glsl */ 14);
 	
 	var _shadersFragmentGlsl2 = _interopRequireDefault(_shadersFragmentGlsl);
 	
@@ -54480,7 +54616,7 @@
 	module.exports = exports['default'];
 
 /***/ },
-/* 10 */
+/* 12 */
 /*!*****************************************!*\
   !*** ./web_modules/shaders/vertex.glsl ***!
   \*****************************************/
@@ -54489,7 +54625,7 @@
 	module.exports = "/**\n * Multiply each vertex by the\n * model-view matrix and the\n * projection matrix (both provided\n * by Three.js) to get a final\n * vertex position\n */\n\n\nvoid main() {\n\n  gl_Position = projectionMatrix *\n                modelViewMatrix *\n                vec4(position,1.0);\n}"
 
 /***/ },
-/* 11 */
+/* 13 */
 /*!***********************************************!*\
   !*** ./web_modules/services/getIntByPitch.js ***!
   \***********************************************/
@@ -54503,7 +54639,7 @@
 	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
 	
-	var _d3 = __webpack_require__(/*! d3 */ 7);
+	var _d3 = __webpack_require__(/*! d3 */ 9);
 	
 	var _d32 = _interopRequireDefault(_d3);
 	
@@ -54532,78 +54668,13 @@
 	module.exports = exports['default'];
 
 /***/ },
-/* 12 */
+/* 14 */
 /*!*******************************************!*\
   !*** ./web_modules/shaders/fragment.glsl ***!
   \*******************************************/
 /***/ function(module, exports, __webpack_require__) {
 
 	module.exports = "/**\n * Set the colour to a lovely pink.\n * Note that the color is a 4D Float\n * Vector, R,G,B and A and each part\n * runs from 0.0 to 1.0\n */\n\nuniform vec4 u_Color;\n\nvoid main() {\n  gl_FragColor = u_Color;\n}"
-
-/***/ },
-/* 13 */
-/*!***********************************!*\
-  !*** ./web_modules/3d/animate.js ***!
-  \***********************************/
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-	
-	Object.defineProperty(exports, '__esModule', {
-	    value: true
-	});
-	exports['default'] = animate;
-	
-	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
-	
-	var _timelineTimelineJs = __webpack_require__(/*! ../timeline/timeline.js */ 14);
-	
-	var _timelineTimelineJs2 = _interopRequireDefault(_timelineTimelineJs);
-	
-	var _setupJs = __webpack_require__(/*! ./setup.js */ 3);
-	
-	var _setupJs2 = _interopRequireDefault(_setupJs);
-	
-	function animate() {
-	    (0, _setupJs2['default'])().then(function (_ref) {
-	        var scene = _ref.scene;
-	        var camera = _ref.camera;
-	        var renderer = _ref.renderer;
-	
-	        renderer.render(scene, camera);
-	        window.requestAnimationFrame(animate);
-	    });
-	}
-	
-	module.exports = exports['default'];
-
-/***/ },
-/* 14 */
-/*!******************************************!*\
-  !*** ./web_modules/timeline/timeline.js ***!
-  \******************************************/
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-	
-	Object.defineProperty(exports, '__esModule', {
-	    value: true
-	});
-	exports['default'] = [{
-	    text: 'Visualisation du concerto pour flute RV 439 de Vivaldi - scrollez pour continuer',
-	    position: [0, 0, -2000],
-	    lookAt: [0, 0, 0]
-	}, {
-	    text: '',
-	    position: [3000, 1000, 0],
-	    movements: 50,
-	    lookAt: [0, 1000, 0]
-	}, {
-	    text: '',
-	    position: [2000, 2000, 1000],
-	    lookAt: [0, 2000, 0]
-	}];
-	module.exports = exports['default'];
 
 /***/ }
 /******/ ]);
