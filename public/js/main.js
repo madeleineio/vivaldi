@@ -63,20 +63,13 @@
 	
 	var _dSetupJs2 = _interopRequireDefault(_dSetupJs);
 	
+	var _dAnimateJs = __webpack_require__(/*! ./3d/animate.js */ 13);
+	
+	var _dAnimateJs2 = _interopRequireDefault(_dAnimateJs);
+	
 	var _componentsScoreJs = __webpack_require__(/*! ./components/Score.js */ 6);
 	
 	var _componentsScoreJs2 = _interopRequireDefault(_componentsScoreJs);
-	
-	function animate() {
-	    (0, _dSetupJs2['default'])().then(function (_ref) {
-	        var scene = _ref.scene;
-	        var camera = _ref.camera;
-	        var renderer = _ref.renderer;
-	
-	        renderer.render(scene, camera);
-	        window.requestAnimationFrame(animate);
-	    });
-	}
 	
 	// first retrieve data from server
 	(0, _jquery2['default'])(function () {
@@ -84,7 +77,7 @@
 	        new _componentsScoreJs2['default']({
 	            score: data[0].scorePartwise
 	        }).render();
-	        animate();
+	        (0, _dAnimateJs2['default'])();
 	    });
 	});
 
@@ -54546,6 +54539,71 @@
 /***/ function(module, exports, __webpack_require__) {
 
 	module.exports = "/**\n * Set the colour to a lovely pink.\n * Note that the color is a 4D Float\n * Vector, R,G,B and A and each part\n * runs from 0.0 to 1.0\n */\n\nuniform vec4 u_Color;\n\nvoid main() {\n  gl_FragColor = u_Color;\n}"
+
+/***/ },
+/* 13 */
+/*!***********************************!*\
+  !*** ./web_modules/3d/animate.js ***!
+  \***********************************/
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	Object.defineProperty(exports, '__esModule', {
+	    value: true
+	});
+	exports['default'] = animate;
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
+	
+	var _timelineTimelineJs = __webpack_require__(/*! ../timeline/timeline.js */ 14);
+	
+	var _timelineTimelineJs2 = _interopRequireDefault(_timelineTimelineJs);
+	
+	var _setupJs = __webpack_require__(/*! ./setup.js */ 3);
+	
+	var _setupJs2 = _interopRequireDefault(_setupJs);
+	
+	function animate() {
+	    (0, _setupJs2['default'])().then(function (_ref) {
+	        var scene = _ref.scene;
+	        var camera = _ref.camera;
+	        var renderer = _ref.renderer;
+	
+	        renderer.render(scene, camera);
+	        window.requestAnimationFrame(animate);
+	    });
+	}
+	
+	module.exports = exports['default'];
+
+/***/ },
+/* 14 */
+/*!******************************************!*\
+  !*** ./web_modules/timeline/timeline.js ***!
+  \******************************************/
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	Object.defineProperty(exports, '__esModule', {
+	    value: true
+	});
+	exports['default'] = [{
+	    text: 'Visualisation du concerto pour flute RV 439 de Vivaldi - scrollez pour continuer',
+	    position: [0, 0, -2000],
+	    lookAt: [0, 0, 0]
+	}, {
+	    text: '',
+	    position: [3000, 1000, 0],
+	    movements: 50,
+	    lookAt: [0, 1000, 0]
+	}, {
+	    text: '',
+	    position: [2000, 2000, 1000],
+	    lookAt: [0, 2000, 0]
+	}];
+	module.exports = exports['default'];
 
 /***/ }
 /******/ ]);

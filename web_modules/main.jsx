@@ -1,17 +1,12 @@
 import $ from 'jquery'
 import getData from './services/getData.js'
 import setup from './3d/setup.js'
+import animate from './3d/animate.js'
 import Score from './components/Score.js'
 
-function animate(){
-    setup().then( ({scene, camera, renderer}) => {
-        renderer.render(scene, camera)
-        window.requestAnimationFrame( animate )
-    })
-}
 
 // first retrieve data from server
-$( () =>
+$(() =>
         Promise.all([
             getData(),
             setup()
