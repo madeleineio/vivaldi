@@ -32,7 +32,7 @@ export default () => {
             renderer.setSize( outerWidth, outerHeight )
 
             scene.add(camera)
-            camera.position.set(0, 0, -2000)
+            camera.position.set(0, 0, -10000)
             camera.lookAt(scene.position)
 
             let container = document.querySelector('#three-container')
