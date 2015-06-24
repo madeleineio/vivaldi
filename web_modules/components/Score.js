@@ -6,7 +6,7 @@ import Part from './Part.js'
 // http://www.2ality.com/2014/08/es6-today.html
 // http://www.2ality.com/2011/11/keyword-parameters.html
 export default class Score {
-    constructor({score, w = 2000, h = 20000}){
+    constructor({score, w = 2000, h = 20000} = {}){
 
         // compute total duration of the score in ms
         // on the first part of the score, we sum the durations of each measures : 60 * 1000 * beats by measure / tempo
