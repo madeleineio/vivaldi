@@ -73,6 +73,13 @@
 	        new _componentsScoreJs2['default']({
 	            score: data[0].scorePartwise
 	        }).render();
+	
+	        var _data$1 = data[1];
+	        var camera = _data$1.camera;
+	        var renderer = _data$1.renderer;
+	        var scene = _data$1.scene;
+	
+	        renderer.render(scene, camera);
 	    });
 	});
 
@@ -54332,14 +54339,138 @@
 	
 	var _d32 = _interopRequireDefault(_d3);
 	
+	var _three = __webpack_require__(/*! three */ 4);
+	
+	var _three2 = _interopRequireDefault(_three);
+	
+	var _servicesGetIntByPitchJs = __webpack_require__(/*! ../services/getIntByPitch.js */ 11);
+	
+	var _servicesGetIntByPitchJs2 = _interopRequireDefault(_servicesGetIntByPitchJs);
+	
+	var _shadersVertexGlsl = __webpack_require__(/*! ../shaders/vertex.glsl */ 10);
+	
+	var _shadersVertexGlsl2 = _interopRequireDefault(_shadersVertexGlsl);
+	
+	var _shadersFragmentGlsl = __webpack_require__(/*! ../shaders/fragment.glsl */ 12);
+	
+	var _shadersFragmentGlsl2 = _interopRequireDefault(_shadersFragmentGlsl);
+	
+	var _dSetupJs = __webpack_require__(/*! ../3d/setup.js */ 3);
+	
+	var _dSetupJs2 = _interopRequireDefault(_dSetupJs);
+	
 	var Measure = (function () {
-	    function Measure() {
+	    function Measure(_ref) {
+	        var measure = _ref.measure;
+	        var translateX = _ref.translateX;
+	        var translateY = _ref.translateY;
+	        var height = _ref.height;
+	        var width = _ref.width;
+	
 	        _classCallCheck(this, Measure);
+	
+	        this.width = width;
+	        this.translateX = translateX;
+	        this.translateY = translateY;
+	
+	        // reoganize measure.note by chords
+	        // [1, 2 chord, 3 chord, 4, 5] => [[1,2,3], [4], [5]]
+	        var chords = [];
+	        var _iteratorNormalCompletion = true;
+	        var _didIteratorError = false;
+	        var _iteratorError = undefined;
+	
+	        try {
+	            for (var _iterator = measure.note[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
+	                var n = _step.value;
+	
+	                if ('chord' in n) {
+	                    chords[chords.length - 1].push(n);
+	                } else {
+	                    chords.push([n]);
+	                }
+	            }
+	        } catch (err) {
+	            _didIteratorError = true;
+	            _iteratorError = err;
+	        } finally {
+	            try {
+	                if (!_iteratorNormalCompletion && _iterator['return']) {
+	                    _iterator['return']();
+	                }
+	            } finally {
+	                if (_didIteratorError) {
+	                    throw _iteratorError;
+	                }
+	            }
+	        }
+	
+	        this.chords = chords;
+	
+	        // scale Y
+	        this.scaleY = _d32['default'].scale.linear().domain([0, measure.computed.time.beats * measure.computed.divisions]).range([0, height]);
+	        this.scaleZ = _d32['default'].scale.linear()
+	        // 0 - 62
+	        .domain([15, 45]).range([-500, 500]).clamp(false);
+	        this.scaleColor = _d32['default'].scale.linear()
+	        // 0 - 62
+	        .domain([15, 45]).range(['#ff0000', '#0000ff']).clamp(false);
 	    }
 	
 	    _createClass(Measure, [{
 	        key: 'render',
-	        value: function render() {}
+	        value: function render() {
+	            var chords = this.chords;
+	            var scaleY = this.scaleY;
+	            var scaleZ = this.scaleZ;
+	            var scaleColor = this.scaleColor;
+	            var width = this.width;
+	            var translateX = this.translateX;
+	            var translateY = this.translateY;
+	
+	            var currentTranslateY = 0;
+	            // we have to deal with backup and voice
+	            var currentVoice = 0;
+	
+	            (0, _dSetupJs2['default'])().then(function (_ref2) {
+	                var scene = _ref2.scene;
+	
+	                chords.forEach(function (chordGroup) {
+	                    var h = scaleY(chordGroup[0].duration);
+	
+	                    chordGroup.forEach(function (note, numNote) {
+	
+	                        if (numNote === 0 && note.voice !== currentVoice) {
+	                            currentVoice = note.voice;
+	                            currentTranslateY = 0;
+	                        }
+	
+	                        if (!('rest' in note)) {
+	                            var col = scaleColor((0, _servicesGetIntByPitchJs2['default'])(note.pitch));
+	                            var shaderMaterial = new _three2['default'].ShaderMaterial({
+	                                uniforms: {
+	                                    u_Color: {
+	                                        type: 'v4',
+	                                        value: new _three2['default'].Vector4(_d32['default'].rgb(col).r / 255, _d32['default'].rgb(col).g / 255, _d32['default'].rgb(col).b / 255, 1)
+	                                    }
+	                                },
+	                                vertexShader: _shadersVertexGlsl2['default'],
+	                                fragmentShader: _shadersFragmentGlsl2['default']
+	                            });
+	
+	                            var geometry = new _three2['default'].BoxGeometry(width / chordGroup.length, h, 5);
+	                            var object = new _three2['default'].Mesh(geometry, shaderMaterial);
+	                            object.position.x = translateX + numNote * width / chordGroup.length + width / chordGroup.length / 2;
+	                            object.position.y = translateY + currentTranslateY + h / 2;
+	                            object.position.z = scaleZ((0, _servicesGetIntByPitchJs2['default'])(note.pitch));
+	
+	                            scene.add(object);
+	                        }
+	                    });
+	                    currentTranslateY += h;
+	                });
+	            });
+	        }
 	    }]);
 	
 	    return Measure;
@@ -54347,6 +54478,67 @@
 	
 	exports['default'] = Measure;
 	module.exports = exports['default'];
+
+/***/ },
+/* 10 */
+/*!*****************************************!*\
+  !*** ./web_modules/shaders/vertex.glsl ***!
+  \*****************************************/
+/***/ function(module, exports, __webpack_require__) {
+
+	module.exports = "/**\n * Multiply each vertex by the\n * model-view matrix and the\n * projection matrix (both provided\n * by Three.js) to get a final\n * vertex position\n */\n\n\nvoid main() {\n\n  gl_Position = projectionMatrix *\n                modelViewMatrix *\n                vec4(position,1.0);\n}"
+
+/***/ },
+/* 11 */
+/*!***********************************************!*\
+  !*** ./web_modules/services/getIntByPitch.js ***!
+  \***********************************************/
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	Object.defineProperty(exports, '__esModule', {
+	    value: true
+	});
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
+	
+	var _d3 = __webpack_require__(/*! d3 */ 7);
+	
+	var _d32 = _interopRequireDefault(_d3);
+	
+	var mappingStep = {
+	    // do
+	    'C': 0,
+	    // ré
+	    'D': 1,
+	    // mi
+	    'E': 2,
+	    // fa
+	    'F': 3,
+	    // sol
+	    'G': 4,
+	    // la
+	    'A': 5,
+	    // si
+	    'B': 6
+	};
+	
+	exports['default'] = function (pitch) {
+	    // notes are from 0 to 62
+	    return pitch.octave * 7 + mappingStep[pitch.step];
+	};
+	
+	module.exports = exports['default'];
+
+/***/ },
+/* 12 */
+/*!*******************************************!*\
+  !*** ./web_modules/shaders/fragment.glsl ***!
+  \*******************************************/
+/***/ function(module, exports, __webpack_require__) {
+
+	module.exports = "/**\n * Set the colour to a lovely pink.\n * Note that the color is a 4D Float\n * Vector, R,G,B and A and each part\n * runs from 0.0 to 1.0\n */\n\nuniform vec4 u_Color;\n\nvoid main() {\n  gl_FragColor = u_Color;\n}"
 
 /***/ }
 /******/ ]);

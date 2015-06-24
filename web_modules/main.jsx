@@ -14,5 +14,9 @@ $( () =>
             new Score({
                 score: data[0].scorePartwise
             }).render()
+
+            let {camera, renderer, scene} = data[1]
+            renderer.render(scene, camera)
+
         })
 )
