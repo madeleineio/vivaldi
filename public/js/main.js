@@ -67,19 +67,24 @@
 	
 	var _componentsScoreJs2 = _interopRequireDefault(_componentsScoreJs);
 	
+	function animate() {
+	    (0, _dSetupJs2['default'])().then(function (_ref) {
+	        var scene = _ref.scene;
+	        var camera = _ref.camera;
+	        var renderer = _ref.renderer;
+	
+	        renderer.render(scene, camera);
+	        window.requestAnimationFrame(animate);
+	    });
+	}
+	
 	// first retrieve data from server
 	(0, _jquery2['default'])(function () {
 	    return Promise.all([(0, _servicesGetDataJs2['default'])(), (0, _dSetupJs2['default'])()]).then(function (data) {
 	        new _componentsScoreJs2['default']({
 	            score: data[0].scorePartwise
 	        }).render();
-	
-	        var _data$1 = data[1];
-	        var camera = _data$1.camera;
-	        var renderer = _data$1.renderer;
-	        var scene = _data$1.scene;
-	
-	        renderer.render(scene, camera);
+	        animate();
 	    });
 	});
 
@@ -54434,6 +54439,8 @@
 	
 	            (0, _dSetupJs2['default'])().then(function (_ref2) {
 	                var scene = _ref2.scene;
+	                var renderer = _ref2.renderer;
+	                var camera = _ref2.camera;
 	
 	                chords.forEach(function (chordGroup) {
 	                    var h = scaleY(chordGroup[0].duration);

@@ -55,7 +55,7 @@ class Measure {
         // we have to deal with backup and voice
         let currentVoice = 0
 
-        setup().then(({scene}) => {
+        setup().then(({scene, renderer, camera}) => {
 
             chords.forEach((chordGroup) => {
                 let h = scaleY(chordGroup[0].duration)
@@ -96,7 +96,6 @@ class Measure {
                 })
                 currentTranslateY += h
             })
-
 
         })
 
