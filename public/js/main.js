@@ -44698,8 +44698,13 @@
 	cameraLookAtSteps = [];
 	
 	(0, _jquery2['default'])(function () {
-	    // TODO : http://www.smashingmagazine.com/2014/08/25/how-i-built-the-one-page-scroll-plugin/
-	    (0, _jquery2['default'])(document).on('click', launchCamera);
+	
+	    (0, _jquery2['default'])(document).on('mousewheel DOMMouseScroll', function (e) {
+	        e.preventDefault();
+	        if (!isCameraMoving) {
+	            launchCamera();
+	        }
+	    });
 	});
 	
 	// launch a new camera move

@@ -19,8 +19,13 @@ let
     cameraLookAtSteps = []
 
 $(()=> {
-    // TODO : http://www.smashingmagazine.com/2014/08/25/how-i-built-the-one-page-scroll-plugin/
-    $(document).on('click', launchCamera)
+
+    $(document).on('mousewheel DOMMouseScroll', (e) => {
+        e.preventDefault()
+        if(!isCameraMoving) {
+            launchCamera()
+        }
+    })
 })
 
 // launch a new camera move
