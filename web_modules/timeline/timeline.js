@@ -28,4 +28,12 @@ export default [{
     text: '',
     position: [-5000, 5000, 5000],
     lookAt: [0, 5000, 0]
+},{
+    position: [0, 5000, 4000],
+    steps: 60,
+    lookAt: [0, 5000, 0]
+},{
+    text: '',
+    position: [8000, 5000, 4000],
+    lookAt: [0, 5000, 0]
 }]
