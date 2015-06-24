@@ -11,6 +11,7 @@ export default () => {
             // create a scene
             let scene = new THREE.Scene()
             let { outerWidth, outerHeight } = window
+            alert(outerWidth)
             let [viewAngle, aspect, near, far] = [40, outerWidth / outerHeight, .1, 40000]
 
             // create a camera

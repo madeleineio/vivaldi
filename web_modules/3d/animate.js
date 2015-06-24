@@ -31,20 +31,21 @@ function launchCamera(){
     currentStep = 0
 
     cameraPositionSteps = new THREE.QuadraticBezierCurve3(
-        new THREE.Vector3(...timeline[0].position),
-        new THREE.Vector3(...timeline[1].position),
-        new THREE.Vector3(...timeline[2].position)
+        new THREE.Vector3(...timeline[timelinePostion+0].position),
+        new THREE.Vector3(...timeline[timelinePostion+1].position),
+        new THREE.Vector3(...timeline[timelinePostion+2].position)
     ).getPoints(totalStep)
     cameraLookAtSteps = new THREE.QuadraticBezierCurve3(
-        new THREE.Vector3(...timeline[0].lookAt),
-        new THREE.Vector3(...timeline[1].lookAt),
-        new THREE.Vector3(...timeline[2].lookAt)
+        new THREE.Vector3(...timeline[timelinePostion+0].lookAt),
+        new THREE.Vector3(...timeline[timelinePostion+1].lookAt),
+        new THREE.Vector3(...timeline[timelinePostion+2].lookAt)
     ).getPoints(totalStep)
 
     isCameraMoving = true
 }
 
 function stopCamera(){
+    console.log('stop camera')
     // increment timeline position
     timelinePostion+=2
     // set flag to false

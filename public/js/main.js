@@ -72,7 +72,7 @@
 	var _componentsScoreJs2 = _interopRequireDefault(_componentsScoreJs);
 	
 	// first retrieve data from server
-	(0, _jquery2['default'])(function () {
+	(0, _jquery2['default'])(window).load(function () {
 	    return Promise.all([(0, _servicesGetDataJs2['default'])(), (0, _dSetupJs2['default'])()]).then(function (data) {
 	        new _componentsScoreJs2['default']({
 	            score: data[0].scorePartwise
@@ -9420,6 +9420,8 @@
 	            var scene = new _three2['default'].Scene();
 	            var outerWidth = window.outerWidth;
 	            var outerHeight = window.outerHeight;
+	
+	            alert(outerWidth);
 	            var viewAngle = 40;
 	            var aspect = outerWidth / outerHeight;
 	            var near = 0.1;
@@ -44705,13 +44707,14 @@
 	    totalStep = _timelineTimelineJs2['default'][timelinePostion + 1].steps;
 	    currentStep = 0;
 	
-	    cameraPositionSteps = new _three2['default'].QuadraticBezierCurve3(new (_bind.apply(_three2['default'].Vector3, [null].concat(_toConsumableArray(_timelineTimelineJs2['default'][0].position))))(), new (_bind.apply(_three2['default'].Vector3, [null].concat(_toConsumableArray(_timelineTimelineJs2['default'][1].position))))(), new (_bind.apply(_three2['default'].Vector3, [null].concat(_toConsumableArray(_timelineTimelineJs2['default'][2].position))))()).getPoints(totalStep);
-	    cameraLookAtSteps = new _three2['default'].QuadraticBezierCurve3(new (_bind.apply(_three2['default'].Vector3, [null].concat(_toConsumableArray(_timelineTimelineJs2['default'][0].lookAt))))(), new (_bind.apply(_three2['default'].Vector3, [null].concat(_toConsumableArray(_timelineTimelineJs2['default'][1].lookAt))))(), new (_bind.apply(_three2['default'].Vector3, [null].concat(_toConsumableArray(_timelineTimelineJs2['default'][2].lookAt))))()).getPoints(totalStep);
+	    cameraPositionSteps = new _three2['default'].QuadraticBezierCurve3(new (_bind.apply(_three2['default'].Vector3, [null].concat(_toConsumableArray(_timelineTimelineJs2['default'][timelinePostion + 0].position))))(), new (_bind.apply(_three2['default'].Vector3, [null].concat(_toConsumableArray(_timelineTimelineJs2['default'][timelinePostion + 1].position))))(), new (_bind.apply(_three2['default'].Vector3, [null].concat(_toConsumableArray(_timelineTimelineJs2['default'][timelinePostion + 2].position))))()).getPoints(totalStep);
+	    cameraLookAtSteps = new _three2['default'].QuadraticBezierCurve3(new (_bind.apply(_three2['default'].Vector3, [null].concat(_toConsumableArray(_timelineTimelineJs2['default'][timelinePostion + 0].lookAt))))(), new (_bind.apply(_three2['default'].Vector3, [null].concat(_toConsumableArray(_timelineTimelineJs2['default'][timelinePostion + 1].lookAt))))(), new (_bind.apply(_three2['default'].Vector3, [null].concat(_toConsumableArray(_timelineTimelineJs2['default'][timelinePostion + 2].lookAt))))()).getPoints(totalStep);
 	
 	    isCameraMoving = true;
 	}
 	
 	function stopCamera() {
+	    console.log('stop camera');
 	    // increment timeline position
 	    timelinePostion += 2;
 	    // set flag to false
@@ -44763,14 +44766,21 @@
 	    position: [0, 0, -2000],
 	    lookAt: [0, 0, 0]
 	}, {
-	    text: '',
 	    position: [3000, 1000, 0],
-	    steps: 50,
+	    steps: 100,
 	    lookAt: [0, 1000, 0]
 	}, {
 	    text: '',
 	    position: [2000, 2000, 1000],
 	    lookAt: [0, 2000, 0]
+	}, {
+	    position: [3000, 3000, 0],
+	    steps: 100,
+	    lookAt: [0, 2000, 0]
+	}, {
+	    text: '',
+	    position: [3000, 3000, 1000],
+	    lookAt: [0, 3000, 0]
 	}];
 	module.exports = exports['default'];
 

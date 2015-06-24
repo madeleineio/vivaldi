@@ -6,7 +6,7 @@ import Score from './components/Score.js'
 
 
 // first retrieve data from server
-$(() =>
+$(window).load(() =>
         Promise.all([
             getData(),
             setup()
