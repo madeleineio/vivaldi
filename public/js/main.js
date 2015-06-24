@@ -44693,7 +44693,6 @@
 	        // we define each part
 	        this.parts = score.part.map(function (part, ind) {
 	            return new _PartJs2['default']({
-	                ind: ind,
 	                translateX: scaleXParts(ind),
 	                part: part,
 	                duration: duration,
@@ -54246,15 +54245,107 @@
 	    value: true
 	});
 	
+	var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ('value' in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
+	
 	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
 	
-	var Part = function Part() {
-	    _classCallCheck(this, Part);
+	var _d3 = __webpack_require__(/*! d3 */ 7);
 	
-	    console.log('part created');
-	};
+	var _d32 = _interopRequireDefault(_d3);
+	
+	var _MeasureJs = __webpack_require__(/*! ./Measure.js */ 9);
+	
+	var _MeasureJs2 = _interopRequireDefault(_MeasureJs);
+	
+	var Part = (function () {
+	    function Part(_ref) {
+	        var translateX = _ref.translateX;
+	        var part = _ref.part;
+	        var duration = _ref.duration;
+	        var width = _ref.width;
+	        var height = _ref.height;
+	
+	        _classCallCheck(this, Part);
+	
+	        // scale for a measure's height : total duration is mapped to the total height
+	        var scaleY = _d32['default'].scale.linear().domain([0, duration]).range([0, height]);
+	
+	        // current height counter
+	        var currentHeight = 0;
+	
+	        this.measures = part.measure.map(function (m) {
+	            // compute height for current measure : beats by measure / tempo
+	            var measureHeight = scaleY(1000 * 60 * m.computed.time.beats / m.computed.sound.tempo);
+	            var measure = new _MeasureJs2['default']({
+	                measure: m,
+	                translateX: translateX,
+	                translateY: currentHeight,
+	                height: measureHeight,
+	                width: width
+	            });
+	            // increment currentHeight
+	            currentHeight += measureHeight;
+	            return measure;
+	        });
+	
+	        // chaining pattern
+	        return this;
+	    }
+	
+	    _createClass(Part, [{
+	        key: 'render',
+	        value: function render() {
+	            this.measures.forEach(function (measure) {
+	                return measure.render();
+	            });
+	        }
+	    }]);
+	
+	    return Part;
+	})();
 	
 	exports['default'] = Part;
+	module.exports = exports['default'];
+
+/***/ },
+/* 9 */
+/*!*******************************************!*\
+  !*** ./web_modules/components/Measure.js ***!
+  \*******************************************/
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	Object.defineProperty(exports, '__esModule', {
+	    value: true
+	});
+	
+	var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ('value' in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
+	
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
+	
+	var _d3 = __webpack_require__(/*! d3 */ 7);
+	
+	var _d32 = _interopRequireDefault(_d3);
+	
+	var Measure = (function () {
+	    function Measure() {
+	        _classCallCheck(this, Measure);
+	    }
+	
+	    _createClass(Measure, [{
+	        key: 'render',
+	        value: function render() {}
+	    }]);
+	
+	    return Measure;
+	})();
+	
+	exports['default'] = Measure;
 	module.exports = exports['default'];
 
 /***/ }

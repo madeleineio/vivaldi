@@ -29,7 +29,6 @@ export default class Score {
 
         // we define each part
         this.parts = score.part.map( ( part, ind ) => new Part({
-            ind: ind,
             translateX: scaleXParts(ind),
             part: part,
             duration: duration,
