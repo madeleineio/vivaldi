@@ -63,9 +63,9 @@
 	
 	var _dSetupJs2 = _interopRequireDefault(_dSetupJs);
 	
-	var _dAnimate2Js = __webpack_require__(/*! ./3d/animate2.js */ 7);
+	var _dAnimateJs = __webpack_require__(/*! ./3d/animate.js */ 15);
 	
-	var _dAnimate2Js2 = _interopRequireDefault(_dAnimate2Js);
+	var _dAnimateJs2 = _interopRequireDefault(_dAnimateJs);
 	
 	var _componentsScoreJs = __webpack_require__(/*! ./components/Score.js */ 8);
 	
@@ -77,7 +77,7 @@
 	        new _componentsScoreJs2['default']({
 	            score: data[0].scorePartwise
 	        }).render();
-	        (0, _dAnimate2Js2['default'])();
+	        (0, _dAnimateJs2['default'])();
 	    });
 	});
 
@@ -9416,9 +9416,9 @@
 	
 	var _jquery2 = _interopRequireDefault(_jquery);
 	
-	var _timelineTimeline2Js = __webpack_require__(/*! ../timeline/timeline2.js */ 6);
+	var _timelineTimelineJs = __webpack_require__(/*! ../timeline/timeline.js */ 16);
 	
-	var _timelineTimeline2Js2 = _interopRequireDefault(_timelineTimeline2Js);
+	var _timelineTimelineJs2 = _interopRequireDefault(_timelineTimelineJs);
 	
 	// we do not instantiate the promise initially, we let the main module call the exported function first after the dom ready
 	// to be sure to have the good width and height
@@ -9455,8 +9455,8 @@
 	            renderer.setSize(outerWidth, outerHeight);
 	
 	            scene.add(camera);
-	            (_camera$position = camera.position).set.apply(_camera$position, _toConsumableArray(_timelineTimeline2Js2['default'][0].position));
-	            camera.lookAt(new (_bind.apply(_three2['default'].Vector3, [null].concat(_toConsumableArray(_timelineTimeline2Js2['default'][0].lookAt))))());
+	            (_camera$position = camera.position).set.apply(_camera$position, _toConsumableArray(_timelineTimelineJs2['default'][0].position));
+	            camera.lookAt(new (_bind.apply(_three2['default'].Vector3, [null].concat(_toConsumableArray(_timelineTimelineJs2['default'][0].lookAt))))());
 	
 	            var container = document.querySelector('#three-container');
 	            container.appendChild(renderer.domElement);
@@ -44652,172 +44652,8 @@
 
 
 /***/ },
-/* 6 */
-/*!*******************************************!*\
-  !*** ./web_modules/timeline/timeline2.js ***!
-  \*******************************************/
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-	
-	Object.defineProperty(exports, '__esModule', {
-	    value: true
-	});
-	var timeline = [{
-	    lookAt: [0, 0, 0],
-	    position: [-5000, 0, 0]
-	}, {
-	    lookAt: [0, 1000, 0],
-	    position: [3000, 0, 3000]
-	}, {
-	    lookAt: [0, 3000, 0],
-	    position: [-1000, 1000, 5000]
-	}, {
-	    lookAt: [0, 3000, 0],
-	    position: [2000, 4000, 10000]
-	}];
-	
-	exports['default'] = timeline;
-	module.exports = exports['default'];
-
-/***/ },
-/* 7 */
-/*!************************************!*\
-  !*** ./web_modules/3d/animate2.js ***!
-  \************************************/
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-	
-	Object.defineProperty(exports, '__esModule', {
-	    value: true
-	});
-	var _bind = Function.prototype.bind;
-	exports['default'] = animate;
-	
-	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
-	
-	function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr2 = Array(arr.length); i < arr.length; i++) arr2[i] = arr[i]; return arr2; } else { return Array.from(arr); } }
-	
-	var _jquery = __webpack_require__(/*! jquery */ 1);
-	
-	var _jquery2 = _interopRequireDefault(_jquery);
-	
-	var _three = __webpack_require__(/*! three */ 4);
-	
-	var _three2 = _interopRequireDefault(_three);
-	
-	var _timelineTimeline2Js = __webpack_require__(/*! ../timeline/timeline2.js */ 6);
-	
-	var _timelineTimeline2Js2 = _interopRequireDefault(_timelineTimeline2Js);
-	
-	var _setupJs = __webpack_require__(/*! ./setup.js */ 3);
-	
-	var _setupJs2 = _interopRequireDefault(_setupJs);
-	
-	var
-	// flag to launch camera move
-	isCameraMoving = false,
-	
-	// timeline position : correspond to the begin
-	// ie : timelinePosition = 0 means that timeline[0], timeline[1] are the extremities of a quadratic bezier curve
-	timelinePostion = 0,
-	
-	// current step in the move's interpolation
-	currentStep = 0,
-	
-	// list of all computed steps for the camera position
-	cameraPositionSteps = [],
-	
-	// list of all computed steps for the camera lookingAt
-	cameraLookAtSteps = [];
-	
-	var animationTotalSteps = 90;
-	
-	(0, _jquery2['default'])(function () {
-	
-	    (0, _jquery2['default'])(document).on('mousewheel DOMMouseScroll', function (e) {
-	        e.preventDefault();
-	        if (!isCameraMoving) {
-	            launchCamera();
-	        }
-	    });
-	});
-	
-	// launch a new camera move
-	// comute all steps of the interpolation
-	function launchCamera() {
-	
-	    currentStep = 0;
-	
-	    var p1Position = new (_bind.apply(_three2['default'].Vector3, [null].concat(_toConsumableArray(_timelineTimeline2Js2['default'][timelinePostion].position))))();
-	    var p2Position = new (_bind.apply(_three2['default'].Vector3, [null].concat(_toConsumableArray(_timelineTimeline2Js2['default'][timelinePostion + 1].position))))();
-	    var linePosition = new _three2['default'].Line3(p1Position, p2Position);
-	    var centerPosition = linePosition.center();
-	
-	    var p1LookAt = new (_bind.apply(_three2['default'].Vector3, [null].concat(_toConsumableArray(_timelineTimeline2Js2['default'][timelinePostion].lookAt))))();
-	    var p2LookAt = new (_bind.apply(_three2['default'].Vector3, [null].concat(_toConsumableArray(_timelineTimeline2Js2['default'][timelinePostion + 1].lookAt))))();
-	    var lineLookAt = new _three2['default'].Line3(p1LookAt, p2LookAt);
-	    var centerLookAt = lineLookAt.center();
-	
-	    // we're trying to find the control point for the position's quadratic curve formed by p1Position and p2Position
-	    // it will be on the extension of the line formed by the centerLookAt point and the centerLookAt
-	    // we arbitrary choose that dist(centerLookAt, centerPosition) = 2* dist(centerPosition, controlPosition)
-	    // the at() function is using a normalized value so we have at(1.5) to reach the controlPosition point
-	    var lineNormal = new _three2['default'].Line3(centerLookAt, centerPosition);
-	    var controlPosition = lineNormal.at(1.5);
-	
-	    // for the camera's position, we use a quadratic curve
-	    cameraPositionSteps = new _three2['default'].QuadraticBezierCurve3(p1Position, controlPosition, p2Position).getPoints(animationTotalSteps);
-	    // but a simple line for the camera's look at
-	    cameraLookAtSteps = new _three2['default'].LineCurve3(p1LookAt, p2LookAt).getPoints(animationTotalSteps);
-	
-	    // let's animate !
-	    isCameraMoving = true;
-	    animate();
-	}
-	
-	function stopCamera() {
-	    // increment timeline position
-	    timelinePostion += 1;
-	    // set flag to false
-	    isCameraMoving = false;
-	}
-	
-	function moveCamera(camera) {
-	
-	    console.log('move');
-	
-	    // camera look at needs a Vector3
-	    camera.lookAt(cameraLookAtSteps[currentStep]);
-	
-	    // camera position is already set, we need to decompose the Vector3 (...)
-	    var cameraPosition = cameraPositionSteps[currentStep];
-	    camera.position.set(cameraPosition.x, cameraPosition.y, cameraPosition.z);
-	    currentStep += 1;
-	}
-	
-	function animate() {
-	    (0, _setupJs2['default'])().then(function (_ref) {
-	        var scene = _ref.scene;
-	        var camera = _ref.camera;
-	        var renderer = _ref.renderer;
-	
-	        if (isCameraMoving) {
-	            if (currentStep < animationTotalSteps) {
-	                moveCamera(camera);
-	            } else {
-	                stopCamera();
-	            }
-	            window.requestAnimationFrame(animate);
-	        }
-	        renderer.render(scene, camera);
-	    });
-	}
-	
-	module.exports = exports['default'];
-
-/***/ },
+/* 6 */,
+/* 7 */,
 /* 8 */
 /*!*****************************************!*\
   !*** ./web_modules/components/Score.js ***!
@@ -54718,6 +54554,181 @@
 /***/ function(module, exports, __webpack_require__) {
 
 	module.exports = "/**\n * Set the colour to a lovely pink.\n * Note that the color is a 4D Float\n * Vector, R,G,B and A and each part\n * runs from 0.0 to 1.0\n */\n\nuniform vec4 u_Color;\n\nvoid main() {\n  gl_FragColor = u_Color;\n}"
+
+/***/ },
+/* 15 */
+/*!***********************************!*\
+  !*** ./web_modules/3d/animate.js ***!
+  \***********************************/
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	Object.defineProperty(exports, '__esModule', {
+	    value: true
+	});
+	var _bind = Function.prototype.bind;
+	exports['default'] = animate;
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
+	
+	function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr2 = Array(arr.length); i < arr.length; i++) arr2[i] = arr[i]; return arr2; } else { return Array.from(arr); } }
+	
+	var _jquery = __webpack_require__(/*! jquery */ 1);
+	
+	var _jquery2 = _interopRequireDefault(_jquery);
+	
+	var _three = __webpack_require__(/*! three */ 4);
+	
+	var _three2 = _interopRequireDefault(_three);
+	
+	var _timelineTimelineJs = __webpack_require__(/*! ../timeline/timeline.js */ 16);
+	
+	var _timelineTimelineJs2 = _interopRequireDefault(_timelineTimelineJs);
+	
+	var _setupJs = __webpack_require__(/*! ./setup.js */ 3);
+	
+	var _setupJs2 = _interopRequireDefault(_setupJs);
+	
+	var
+	// flag to launch camera move
+	isCameraMoving = false,
+	
+	// timeline position : correspond to the begin
+	// ie : timelinePosition = 0 means that timeline[0], timeline[1] are the extremities of a quadratic bezier curve
+	timelinePostion = 0,
+	
+	// current step in the move's interpolation
+	currentStep = 0,
+	
+	// list of all computed steps for the camera position
+	cameraPositionSteps = [],
+	
+	// list of all computed steps for the camera lookingAt
+	cameraLookAtSteps = [];
+	
+	var animationTotalSteps = 150;
+	
+	(0, _jquery2['default'])(function () {
+	
+	    (0, _jquery2['default'])(document).on('mousewheel DOMMouseScroll', function (e) {
+	        e.preventDefault();
+	        if (!isCameraMoving) {
+	            launchCamera();
+	        }
+	    });
+	});
+	
+	// launch a new camera move
+	// comute all steps of the interpolation
+	function launchCamera() {
+	
+	    currentStep = 0;
+	
+	    var p1Position = new (_bind.apply(_three2['default'].Vector3, [null].concat(_toConsumableArray(_timelineTimelineJs2['default'][timelinePostion].position))))();
+	    var p2Position = new (_bind.apply(_three2['default'].Vector3, [null].concat(_toConsumableArray(_timelineTimelineJs2['default'][timelinePostion + 1].position))))();
+	    var linePosition = new _three2['default'].Line3(p1Position, p2Position);
+	    var centerPosition = linePosition.center();
+	
+	    var p1LookAt = new (_bind.apply(_three2['default'].Vector3, [null].concat(_toConsumableArray(_timelineTimelineJs2['default'][timelinePostion].lookAt))))();
+	    var p2LookAt = new (_bind.apply(_three2['default'].Vector3, [null].concat(_toConsumableArray(_timelineTimelineJs2['default'][timelinePostion + 1].lookAt))))();
+	    var lineLookAt = new _three2['default'].Line3(p1LookAt, p2LookAt);
+	    var centerLookAt = lineLookAt.center();
+	
+	    // we're trying to find the control point for the position's quadratic curve formed by p1Position and p2Position
+	    // it will be on the extension of the line formed by the centerLookAt point and the centerLookAt
+	    // we arbitrary choose that dist(centerLookAt, centerPosition) = 2* dist(centerPosition, controlPosition)
+	    // the at() function is using a normalized value so we have at(1.5) to reach the controlPosition point
+	    var lineNormal = new _three2['default'].Line3(centerLookAt, centerPosition);
+	    var controlPosition = lineNormal.at(1.5);
+	
+	    // for the camera's position, we use a quadratic curve
+	    cameraPositionSteps = new _three2['default'].QuadraticBezierCurve3(p1Position, controlPosition, p2Position).getPoints(animationTotalSteps);
+	    // but a simple line for the camera's look at
+	    cameraLookAtSteps = new _three2['default'].LineCurve3(p1LookAt, p2LookAt).getPoints(animationTotalSteps);
+	
+	    // let's animate !
+	    isCameraMoving = true;
+	    animate();
+	}
+	
+	function stopCamera() {
+	    // increment timeline position
+	    timelinePostion += 1;
+	    // set flag to false
+	    isCameraMoving = false;
+	}
+	
+	function moveCamera(camera) {
+	    // camera look at needs a Vector3
+	    camera.lookAt(cameraLookAtSteps[currentStep]);
+	
+	    // camera position is already set, we need to decompose the Vector3 (...)
+	    var cameraPosition = cameraPositionSteps[currentStep];
+	    camera.position.set(cameraPosition.x, cameraPosition.y, cameraPosition.z);
+	    currentStep += 1;
+	}
+	
+	function animate() {
+	    (0, _setupJs2['default'])().then(function (_ref) {
+	        var scene = _ref.scene;
+	        var camera = _ref.camera;
+	        var renderer = _ref.renderer;
+	
+	        if (isCameraMoving) {
+	            if (currentStep < animationTotalSteps) {
+	                moveCamera(camera);
+	            } else {
+	                stopCamera();
+	            }
+	            window.requestAnimationFrame(animate);
+	        }
+	        renderer.render(scene, camera);
+	    });
+	}
+	
+	module.exports = exports['default'];
+
+/***/ },
+/* 16 */
+/*!******************************************!*\
+  !*** ./web_modules/timeline/timeline.js ***!
+  \******************************************/
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	Object.defineProperty(exports, '__esModule', {
+	    value: true
+	});
+	var timeline = [{
+	    lookAt: [0, -1500, 0],
+	    position: [-5000, -3000, 0]
+	}, {
+	    lookAt: [0, 3000, 0],
+	    position: [500, 4000, 10000]
+	}, {
+	    lookAt: [0, 8000, 0],
+	    position: [4000, 4000, -2000]
+	}, {
+	    lookAt: [0, 10000, 0],
+	    position: [0, 6000, 0]
+	}, {
+	    lookAt: [0, 11000, 0],
+	    position: [300, 10000, 0]
+	}, {
+	    lookAt: [0, 12000, 0],
+	    position: [-7000, 13000, -500]
+	}, {
+	    lookAt: [0, 14000, 0],
+	    position: [7000, 16000, -1500]
+	}, {
+	    lookAt: [0, 16000, 0],
+	    position: [-7000, 16000, -10500]
+	}];
+	
+	exports['default'] = timeline;
+	module.exports = exports['default'];
 
 /***/ }
 /******/ ]);

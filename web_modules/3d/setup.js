@@ -3,7 +3,7 @@ import THREE from 'three'
 import isWebglEnabled from 'detector-webgl'
 import $ from 'jquery'
 
-import timeline from '../timeline/timeline2.js'
+import timeline from '../timeline/timeline.js'
 
 // we do not instantiate the promise initially, we let the main module call the exported function first after the dom ready
 // to be sure to have the good width and height
