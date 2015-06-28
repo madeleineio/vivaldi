@@ -1,50 +1,55 @@
 'use strict'
-
 import THREE from 'three'
-import OrbitControlsFactory from 'three-orbit-controls'
 import isWebglEnabled from 'detector-webgl'
-import EffectComposerFactory from 'three-effectcomposer'
+import $ from 'jquery'
 
-let EffectComposer = EffectComposerFactory(THREE)
+import timeline from '../timeline/timeline.js'
 
-// create a scene
-let scene = new THREE.Scene()
+// we do not instantiate the promise initially, we let the main module call the exported function first after the dom ready
+// to be sure to have the good width and height
+let p
+export default () => {
+    if(!p) {
+        p = new Promise( (resolve) => {
+            // create a scene
+            let scene = new THREE.Scene()
+            let outerWidth = $(window).width()
+            let outerHeight = $(window).height()
+            let [viewAngle, aspect, near, far] = [40, outerWidth / outerHeight, .1, 40000]
 
-let { outerWidth, outerHeight } = window
+            // create a camera
+            let camera = new THREE.PerspectiveCamera(viewAngle, aspect, near, far)
 
-let [viewAngle, aspect, near, far] = [40, outerWidth / outerHeight, .1, 40000]
+            // renderer
+            let renderer
+            if(isWebglEnabled){
+                renderer = new THREE.WebGLRenderer({
+                    antialias: true,
+                    precision: 'highp'
+                })
+                renderer.setClearColor( 0xFFFFFF, 1 )
+            } else {
+                renderer = new THREE.CanvasRenderer()
+            }
+            renderer.setSize( outerWidth, outerHeight )
 
-// create a camera
-let camera = new THREE.PerspectiveCamera(viewAngle, aspect, near, far)
+            scene.add(camera)
+            camera.position.set( ...timeline[0].position )
+            camera.lookAt( new THREE.Vector3(...timeline[0].lookAt) )
 
-// renderer
-let renderer
-if(isWebglEnabled){
-    renderer = new THREE.WebGLRenderer({
-        antialias: true,
-        //precision: 'highp'
-    })
-    renderer.setClearColor( 0xFFFFFF, 1 )
-} else {
-    renderer = new THREE.CanvasRenderer()
+            let container = document.querySelector('#three-container')
+            container.appendChild(renderer.domElement)
+
+            let axis = new THREE.AxisHelper(100)
+            scene.add(axis)
+
+            resolve({
+                scene: scene,
+                camera: camera,
+                renderer: renderer
+            })
+
+        } )
+    }
+    return p
 }
-renderer.setSize( outerWidth, outerHeight )
-
-// control
-// let OrbitControls = OrbitControlsFactory(THREE)
-// let control = new OrbitControls(camera, renderer.domElement)
-
-scene.add(camera)
-camera.position.set(0, 0, -2000)
-camera.lookAt(scene.position)
-
-let container = document.querySelector('#three-container')
-container.appendChild(renderer.domElement)
-
-let axis = new THREE.AxisHelper(100)
-scene.add(axis)
-
-export { scene as scene }
-export { camera as camera }
-export { renderer as renderer }
-// export { control as control }
