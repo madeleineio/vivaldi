@@ -26,7 +26,7 @@ let timeline = [{
     position: [-10000, 16000, 0]
 },{
     lookAt: [0,18000,0],
-    position: [0, 20000, 8000]
+    position: [-5000, 23000, 2500]
 }]
 
 export default timeline
