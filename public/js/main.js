@@ -44664,8 +44664,8 @@
 	    value: true
 	});
 	var timeline = [{
-	    lookAt: [0, -1500, 0],
-	    position: [-5000, -3000, 0]
+	    lookAt: [0, 0, 0],
+	    position: [-10000, -3000, 500]
 	}, {
 	    lookAt: [0, 3000, 0],
 	    position: [500, 4000, 10000]
@@ -44689,7 +44689,7 @@
 	    position: [-10000, 16000, 0]
 	}, {
 	    lookAt: [0, 18000, 0],
-	    position: [-7000, 22000, 1000]
+	    position: [-7000, 22000, 750]
 	}];
 	
 	exports['default'] = timeline;
