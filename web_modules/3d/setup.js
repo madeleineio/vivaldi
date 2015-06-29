@@ -13,7 +13,7 @@ export default () => {
         p = new Promise( (resolve) => {
             // create a scene
             let scene = new THREE.Scene()
-            let outerWidth = $(window).width()
+            let outerWidth = $(window).width() * 1.333
             let outerHeight = $(window).height()
             let [viewAngle, aspect, near, far] = [40, outerWidth / outerHeight, .1, 40000]
 
