@@ -15,5 +15,8 @@ $(window).load(() =>
                 score: data[0].scorePartwise
             }).render()
             animate()
+
+
+
         })
 )
