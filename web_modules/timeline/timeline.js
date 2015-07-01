@@ -25,13 +25,16 @@ let timeline = [{
         'Scrollez pour continuer']
 },{
     lookAt: [0,14000,0],
-    position: [2000, 14000, 0]
+    position: [2000, 14000, 0],
+    text: ['Scrollez pour continuer']
 },{
     lookAt: [0,16000,0],
-    position: [-10000, 15500, 3000]
+    position: [-10000, 15500, 3000],
+    text: ['Scrollez pour continuer']
 },{
     lookAt: [0,18000,0],
-    position: [-11000, 22000, 2000]
+    position: [-11000, 22000, 2000],
+    text: ['Fin']
 }]
 
 export default timeline

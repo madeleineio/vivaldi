@@ -9,7 +9,12 @@ import Legend from './components/Legend.jsx'
 
 
 // first retrieve data from server
-$(window).load(() =>
+$(window).load(() => {
+        React.render(
+            <Legend />,
+            document.querySelector('#react-container')
+        )
+
         Promise.all([
             getData(),
             setup()
@@ -18,12 +23,6 @@ $(window).load(() =>
                 score: data[0].scorePartwise
             }).render()
             animate()
-
-            React.render(
-                <Legend />,
-                document.querySelector('#react-container')
-            )
-
-
         })
+    }
 )

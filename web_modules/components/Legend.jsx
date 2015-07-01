@@ -1,12 +1,15 @@
 import React from 'react'
 import $ from 'jquery'
+import timeline from '../timeline/timeline.js'
+import Animation from './Animation.jsx'
+import Line from './Line.jsx'
 
 export default class Legend extends React.Component {
 
     constructor(props){
         super(props)
         this.state = {
-            texts: []
+            texts: timeline[0].text
         }
     }
 
@@ -22,9 +25,21 @@ export default class Legend extends React.Component {
     render(){
         let { texts } = this.state
         return (
-            <div>
-                {texts.map( (t,k) => <p key={k}>{t}</p> )}
+            <div style={{
+                width: '100%',
+                margin: '50px',
+                fontFamily: 'Helvetica',
+                fontSize: '20px',
+                fontStyle: 'oblique',
+                fontWeight: 100
+            }}>
+                {texts.map( (t,k) =>
+                <Animation name={'opacity'}>
+                    <Line key={k} text={t} opacity={1} />
+                </Animation>
+                )}
             </div>
+
         )
     }
 
