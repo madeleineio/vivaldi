@@ -19,7 +19,6 @@ let
 const animationTotalSteps = 150
 
 $(()=> {
-
     $(document).on('mousewheel DOMMouseScroll', (e) => {
         e.preventDefault()
         if(!isCameraMoving) {
@@ -31,6 +30,10 @@ $(()=> {
 // launch a new camera move
 // comute all steps of the interpolation
 function launchCamera(){
+
+    $(document).trigger('animate', { texts: []})
+
+    isCameraMoving = true
 
     currentStep = 0
 
@@ -64,13 +67,14 @@ function launchCamera(){
     ).getPoints(animationTotalSteps)
 
     // let's animate !
-    isCameraMoving = true
     animate()
 }
 
 function stopCamera(){
     // increment timeline position
     timelinePostion+=1
+
+    $(document).trigger('animate', { texts: timeline[timelinePostion].text})
     // set flag to false
     isCameraMoving = false
 }
