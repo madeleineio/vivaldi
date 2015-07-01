@@ -1,8 +1,11 @@
 import $ from 'jquery'
+import React from 'react'
+
 import getData from './services/getData.js'
 import setup from './3d/setup.js'
 import animate from './3d/animate.js'
 import Score from './components/Score.js'
+import Legend from './components/Legend.jsx'
 
 
 // first retrieve data from server
@@ -16,6 +19,10 @@ $(window).load(() =>
             }).render()
             animate()
 
+            React.render(
+                <Legend />,
+                document.querySelector('#react-container')
+            )
 
 
         })

@@ -70,6 +70,9 @@ function launchCamera(){
 }
 
 function stopCamera(){
+    console.log(timeline[timelinePostion].text)
+    $(document).trigger('animate', { texts: timeline[timelinePostion].text})
+
     // increment timeline position
     timelinePostion+=1
     // set flag to false
