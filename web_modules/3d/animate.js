@@ -32,6 +32,8 @@ $(()=> {
 // comute all steps of the interpolation
 function launchCamera(){
 
+    isCameraMoving = true
+
     currentStep = 0
 
     let p1Position = new THREE.Vector3(...timeline[timelinePostion].position)
@@ -64,7 +66,6 @@ function launchCamera(){
     ).getPoints(animationTotalSteps)
 
     // let's animate !
-    isCameraMoving = true
     animate()
 }
 

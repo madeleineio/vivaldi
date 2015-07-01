@@ -44757,6 +44757,8 @@
 	// comute all steps of the interpolation
 	function launchCamera() {
 	
+	    isCameraMoving = true;
+	
 	    currentStep = 0;
 	
 	    var p1Position = new (_bind.apply(_three2['default'].Vector3, [null].concat(_toConsumableArray(_timelineTimelineJs2['default'][timelinePostion].position))))();
@@ -44782,7 +44784,6 @@
 	    cameraLookAtSteps = new _three2['default'].LineCurve3(p1LookAt, p2LookAt).getPoints(animationTotalSteps);
 	
 	    // let's animate !
-	    isCameraMoving = true;
 	    animate();
 	}
 	
