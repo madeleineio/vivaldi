@@ -25,7 +25,7 @@ export default () => {
             if(isWebglEnabled){
                 renderer = new THREE.WebGLRenderer({
                     antialias: true,
-                    precision: 'highp'
+                    //precision: 'highp'
                 })
                 renderer.setClearColor( 0xFFFFFF, 1 )
             } else {
@@ -40,8 +40,8 @@ export default () => {
             let container = document.querySelector('#three-container')
             container.appendChild(renderer.domElement)
 
-            let axis = new THREE.AxisHelper(100)
-            scene.add(axis)
+            //let axis = new THREE.AxisHelper(100)
+            //scene.add(axis)
 
             resolve({
                 scene: scene,

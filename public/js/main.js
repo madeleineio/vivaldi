@@ -9445,9 +9445,7 @@
 	            var renderer = undefined;
 	            if (_detectorWebgl2['default']) {
 	                renderer = new _three2['default'].WebGLRenderer({
-	                    antialias: true,
-	                    precision: 'highp'
-	                });
+	                    antialias: true });
 	                renderer.setClearColor(16777215, 1);
 	            } else {
 	                renderer = new _three2['default'].CanvasRenderer();
@@ -9461,8 +9459,8 @@
 	            var container = document.querySelector('#three-container');
 	            container.appendChild(renderer.domElement);
 	
-	            var axis = new _three2['default'].AxisHelper(100);
-	            scene.add(axis);
+	            //let axis = new THREE.AxisHelper(100)
+	            //scene.add(axis)
 	
 	            resolve({
 	                scene: scene,
@@ -9475,6 +9473,8 @@
 	};
 	
 	module.exports = exports['default'];
+
+	//precision: 'highp'
 
 /***/ },
 /* 4 */
