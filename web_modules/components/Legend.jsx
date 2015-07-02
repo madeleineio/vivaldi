@@ -30,7 +30,6 @@ export default class Legend extends React.Component {
                 margin: '50px',
                 fontFamily: 'Helvetica',
                 fontSize: '20px',
-                fontStyle: 'oblique',
                 fontWeight: 100
             }}>
                 {texts.map( (t,k) =>
